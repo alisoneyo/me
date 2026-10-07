@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://thealisoneyo.com/sitemap.xml
+Sitemap: https://www.thealisoneyo.com/sitemap.xml

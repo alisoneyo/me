@@ -1,6 +1,6 @@
 # Alison Eyo · Webinar landing page
 
-Live at **https://thealisoneyo.com/job/**. This is the landing page for the free live webinar *Land a high paying role in a new industry* (Sat 24 Oct 2026, 8pm UK).
+Live at **https://www.thealisoneyo.com/job/**. This is the landing page for the free live webinar *Land a high paying role in a new industry* (Sat 24 Oct 2026, 8pm UK).
 
 Plain HTML, CSS and vanilla JS with no build step. The site root must be the repository root, so this folder is served at `/job/`. All asset paths are absolute (`/job/...`), so both `/job` and `/job/` work.
 
