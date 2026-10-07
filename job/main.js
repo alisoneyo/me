@@ -105,6 +105,30 @@ function initSignup() {
   $$('a[href="#register"]').forEach(a => a.addEventListener('click', load, { once: true }));
 }
 
+/* ---------- Sticky CTA (mobile) ---------- */
+
+// Pin the button to the bottom of the screen once the hero button has scrolled away,
+// and take it down as soon as the register section comes into view.
+function initStickyCta() {
+  const bar = $('.sticky-cta');
+  const link = $('a', bar);
+  const heroCta = $('.hero-copy .btn-dark');
+  const register = $('#register');
+  if (!bar || !heroCta || !register || !('IntersectionObserver' in window)) return;
+  const seen = new Map([[heroCta, true], [register, false]]);
+  const update = () => {
+    const show = mobileQuery.matches && !seen.get(heroCta) && !seen.get(register)
+      && heroCta.getBoundingClientRect().bottom < 0; // only after scrolling past it, not before
+    bar.classList.toggle('is-visible', show);
+    bar.setAttribute('aria-hidden', String(!show));
+    link.tabIndex = show ? 0 : -1;
+  };
+  const io = new IntersectionObserver(es => { es.forEach(e => seen.set(e.target, e.isIntersecting)); update(); });
+  io.observe(heroCta);
+  io.observe(register);
+  mobileQuery.addEventListener('change', update);
+}
+
 /* ---------- Scroll reveal ---------- */
 
 function initReveal() {
@@ -305,6 +329,7 @@ function initGallery() {
 initTimes();
 initVideo();
 initSignup();
+initStickyCta();
 initReveal();
 initBackgrounds();
 initKit();
