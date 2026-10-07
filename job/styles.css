@@ -867,10 +867,10 @@ input::placeholder { color: #8C8486; }
     display: flex;
     padding: 20px var(--gutter) 0;
   }
-  .nav-logo svg { width: 48px; height: 56px; }
+  .nav-logo svg { width: 43.2px; height: 50.4px; }
   .nav-live, .nav-cta { display: none; }
-  .hero-live { display: block; }
-  .hero-body { gap: 80px 0; }
+  .hero-live { display: block; margin-bottom: -16px; } /* 64px to the headline */
+  .hero-body { gap: 80px 0; padding-top: 75px; align-content: flex-start; }
   .btn-dark { width: 100%; justify-content: space-between; }
 
   .for-you { padding-top: 24px; }
