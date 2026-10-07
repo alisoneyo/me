@@ -9,15 +9,22 @@ const CONFIG = {
 const EVENT_START = new Date(Date.UTC(2026, 9, 24, 19, 0)); // 8pm BST
 const LONDON = 'Europe/London';
 
+const SERLZO_EMBED = 'https://xxx-v3.serlzo.com/forms/embed.js';
+
+// w = width of the -lg file, used for the responsive srcset
 const GALLERY = {
-  undergrad: { label: 'Undergrad',   src: 'assets/era-undergrad.jpg',  pos: '50% 0%',  caption: 'B.Sc Biochemistry' },
-  ioc:       { label: 'Oil & gas',   src: 'assets/era-oilgas.jpg',     pos: '6% 50%',  caption: 'Product chemist intern at an international oil company' },
-  fintech:   { label: 'Fintech',     src: 'assets/era-fintech.jpg',    pos: '50% 55%', caption: 'Led design for payments at a fintech unicorn for 4 years' },
-  ai:        { label: 'Creative AI', src: 'assets/era-creativeai.jpg', pos: '52% 35%', caption: '' },
-  now:       { label: 'Today',       src: 'assets/alison-eyo.jpg',     pos: '50% 30%', caption: 'Senior Product Designer at Picsart' }
+  undergrad: { file: 'era-undergrad',  w: 900,  pos: '50% 0%',  alt: 'Alison as a biochemistry undergraduate', caption: 'B.Sc Biochemistry' },
+  ioc:       { file: 'era-oilgas',     w: 1040, pos: '6% 50%',  alt: 'Alison during her oil and gas internship', caption: 'Product chemist intern at an international oil company' },
+  fintech:   { file: 'era-fintech',    w: 1040, pos: '50% 55%', alt: 'Alison during her years in fintech', caption: 'Led design for payments at a fintech unicorn for 4 years' },
+  ai:        { file: 'era-creativeai', w: 683,  pos: '52% 35%', alt: 'Alison in her creative AI era', caption: '' },
+  now:       { file: 'alison-eyo',     w: 1013, pos: '50% 30%', alt: 'Alison Eyo today', caption: 'Senior Product Designer at Picsart' }
 };
+const ASSETS = '/job/assets/';
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const conn = navigator.connection || {};
+// Data saver or a very slow connection: draw the backgrounds once instead of animating them.
+const lowData = !!conn.saveData || /(^|-)2g$/.test(conn.effectiveType || '');
 const mobileQuery = window.matchMedia('(max-width: 639.98px)');
 const EASE = 'cubic-bezier(.2,.8,.2,1)';
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -55,19 +62,47 @@ function initTimes() {
 
 /* ---------- Video ---------- */
 
+// The YouTube player (~1MB) only loads when someone presses play.
 function initVideo() {
   const url = (CONFIG.videoUrl || '').trim();
   if (!url) return;
   const id = (url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/) || [])[1];
-  const src = id ? `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1` : url;
+  const src = id ? `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&autoplay=1` : url;
   const box = $('.video');
-  const iframe = document.createElement('iframe');
-  iframe.src = src;
-  iframe.title = 'A word from Alison';
-  iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
-  iframe.allowFullscreen = true;
-  iframe.loading = 'lazy';
-  box.replaceChildren(iframe);
+  const play = $('.video-play', box);
+  play.disabled = false;
+  play.addEventListener('click', () => {
+    const iframe = document.createElement('iframe');
+    iframe.src = src;
+    iframe.title = 'A word from Alison';
+    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+    iframe.allowFullscreen = true;
+    box.replaceChildren(iframe);
+  }, { once: true });
+}
+
+/* ---------- Registration form (Serlzo) ---------- */
+
+// Load the form embed only as the visitor gets near the register section.
+function initSignup() {
+  const target = $('.signup-embed');
+  if (!target) return;
+  let loaded = false;
+  const load = () => {
+    if (loaded) return;
+    loaded = true;
+    const script = document.createElement('script');
+    script.src = SERLZO_EMBED;
+    script.async = true;
+    document.body.appendChild(script);
+  };
+  if (!('IntersectionObserver' in window)) return load();
+  const io = new IntersectionObserver(es => {
+    if (es.some(e => e.isIntersecting)) { io.disconnect(); load(); }
+  }, { rootMargin: '1200px 0px' });
+  io.observe(target);
+  // Anchor links to #register jump straight there; start loading at once.
+  $$('a[href="#register"]').forEach(a => a.addEventListener('click', load, { once: true }));
 }
 
 /* ---------- Scroll reveal ---------- */
@@ -168,12 +203,12 @@ function initBackgrounds() {
       }
       if (visible.get(ctaCanvas)) draw(ctaCanvas, t * .8, { bias: ctaBias, chk: .72, pal: ctaPal });
     }
-    if (!reduceMotion) requestAnimationFrame(loop);
+    if (!reduceMotion && !lowData) requestAnimationFrame(loop);
   };
   requestAnimationFrame(loop);
 
   // With motion off, still repaint the static frame if the layout switches between mobile and desktop.
-  if (reduceMotion) mobileQuery.addEventListener('change', () => { last = 0; requestAnimationFrame(loop); });
+  if (reduceMotion || lowData) mobileQuery.addEventListener('change', () => { last = 0; requestAnimationFrame(loop); });
 }
 
 /* ---------- Application kit stage ---------- */
@@ -192,6 +227,7 @@ function initGallery() {
   const main = $('.gallery-main');
   const mainImgWrap = $('.gallery-main-img');
   const mainImg = $('img', mainImgWrap);
+  const mainSource = $('source', mainImgWrap);
   const tip = $('.gallery-tip');
   const tipText = $('.gallery-tip-text');
   const thumbs = $$('.thumb');
@@ -200,8 +236,9 @@ function initGallery() {
 
   const apply = key => {
     const g = GALLERY[key];
-    mainImg.src = g.src;
-    mainImg.alt = g.label;
+    if (mainSource) mainSource.srcset = `${ASSETS}${g.file}-600.webp 600w, ${ASSETS}${g.file}-lg.webp ${g.w}w`;
+    mainImg.src = `${ASSETS}${g.file}-lg.jpg`;
+    mainImg.alt = g.alt;
     mainImg.style.objectPosition = g.pos;
     tipText.textContent = g.caption;
     if (hovering) tip.style.opacity = g.caption ? 1 : 0;
@@ -267,6 +304,7 @@ function initGallery() {
 
 initTimes();
 initVideo();
+initSignup();
 initReveal();
 initBackgrounds();
 initKit();

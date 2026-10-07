@@ -1,6 +1,23 @@
 /* Alison Eyo · Webinar landing page
    Breakpoints: mobile < 640px · tablet 640–1099px · desktop ≥ 1100px */
 
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/job/fonts/geist-latin.woff2') format('woff2');
+}
+/* Metric-matched local fallback so text doesn't jump when Geist arrives */
+@font-face {
+  font-family: 'Geist Fallback';
+  src: local('Arial'), local('Helvetica Neue'), local('Helvetica');
+  ascent-override: 95.94%;
+  descent-override: 28.16%;
+  line-gap-override: 0%;
+  size-adjust: 104.76%;
+}
+
 :root {
   --bg: #FAF8F3;
   --ink: #111;
@@ -28,7 +45,7 @@ input::placeholder { color: #8C8486; }
 [hidden] { display: none !important; }
 
 .page {
-  font-family: 'Geist', system-ui, sans-serif;
+  font-family: 'Geist', 'Geist Fallback', system-ui, sans-serif;
   background: var(--bg);
   color: var(--ink);
   overflow-x: clip;
@@ -298,6 +315,13 @@ input::placeholder { color: #8C8486; }
   isolation: isolate;
   box-shadow: 0 1px 2px rgba(17,17,17,.05), 0 30px 60px -30px rgba(17,17,17,.25);
 }
+.video-play {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+}
+.video-play:focus-visible { outline: 3px solid var(--pink); outline-offset: 4px; }
 .video iframe {
   position: absolute;
   inset: 0;
