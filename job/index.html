@@ -128,15 +128,28 @@
   <!-- FOR YOU -->
   <section class="section for-you">
     <h2 class="h2 quote" data-reveal>“I know how to do my job. I want to do it in <span class="pink">a different industry.</span><br>How do I make that move?”</h2>
-    <div class="video" data-reveal>
-      <div class="video-placeholder">
-        <div class="video-checker"></div>
-        <div class="video-vignette"></div>
-        <div class="video-center">
-          <button type="button" class="play video-play" aria-label="Play the video" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4 L20 12 L6 20 Z" fill="currentColor"/></svg></button>
+    <section class="pv" id="intro-video" aria-label="A quick word from Alison">
+      <div class="pv-note" aria-hidden="true">
+        <p>give me 60s to tell you how</p>
+        <svg class="pv-arrow pv-arrow--desk" viewBox="0 0 220 120"><g fill="none" stroke="#E50050" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path data-draw data-delay="200" data-dur="1200" d="M10 12 C 40 70, 95 112, 150 96 C 178 88, 186 64, 168 54 C 150 46, 140 72, 162 86 C 180 98, 200 100, 212 98"/><path data-draw data-delay="1200" data-dur="400" d="M196 84 L 213 98 L 194 110"/></g></svg>
+        <svg class="pv-arrow pv-arrow--mob" viewBox="0 0 120 90"><g fill="none" stroke="#E50050" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path data-draw data-delay="200" data-dur="1000" d="M6 10 C 50 0, 92 18, 96 48 C 98 62, 90 74, 82 84"/><path data-draw data-delay="1100" data-dur="350" d="M70 76 L 82 86 L 94 74"/></g></svg>
+      </div>
+
+      <div class="pv-phone">
+        <div class="pv-glow" aria-hidden="true"></div>
+        <div class="pv-screen">
+          <!-- Placeholder: replaced by the video when CONFIG.videoUrl is set in main.js (use a vertical 9:16 YouTube Short) -->
+          <div class="pv-ph-bg"></div>
+          <div class="pv-ph-shade"></div>
+          <div class="pv-bars"><span></span><span></span><span></span></div>
+          <button class="pv-play" type="button" aria-label="Play video" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4 L20 12 L6 20 Z" fill="currentColor"/></svg></button>
+          <div class="pv-cap">
+            <div class="pv-handle"><img src="/job/assets/alison-eyo-avatar.webp" alt="" width="28" height="28" loading="lazy" decoding="async">thealisoneyo</div>
+            <p>A quick word before you sign up.</p>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <h2 class="h2 for-you-title" data-reveal>This webinar is <span class="pink"><em>for you</em></span> if</h2>
 

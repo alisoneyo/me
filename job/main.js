@@ -1,8 +1,8 @@
 /* Alison Eyo · Webinar landing page */
 
 const CONFIG = {
-  // Paste a YouTube link (watch, youtu.be, shorts or embed URL) to replace
-  // the placeholder with the video.
+  // Paste a YouTube link (a vertical 9:16 Short works best in the phone frame)
+  // to replace the placeholder with the video.
   videoUrl: ''
 };
 
@@ -60,25 +60,58 @@ function initTimes() {
   }
 }
 
-/* ---------- Video ---------- */
+/* ---------- Phone video ---------- */
 
-// The YouTube player (~1MB) only loads when someone presses play.
+// The YouTube player (~1MB) only loads when someone presses play. Use a vertical (9:16) Short.
 function initVideo() {
   const url = (CONFIG.videoUrl || '').trim();
   if (!url) return;
   const id = (url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/) || [])[1];
-  const src = id ? `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&autoplay=1` : url;
-  const box = $('.video');
-  const play = $('.video-play', box);
+  const src = id ? `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1&autoplay=1` : url;
+  const screen = $('.pv-screen');
+  const play = $('.pv-play', screen);
   play.disabled = false;
   play.addEventListener('click', () => {
     const iframe = document.createElement('iframe');
     iframe.src = src;
-    iframe.title = 'A word from Alison';
+    iframe.title = 'A quick word from Alison';
     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
     iframe.allowFullscreen = true;
-    box.replaceChildren(iframe);
+    screen.replaceChildren(iframe);
   }, { once: true });
+}
+
+// Glow follows the pointer near the phone; the hand-drawn arrow draws itself on scroll.
+function initPhoneGlow() {
+  const sec = $('.pv'); if (!sec) return;
+  const glow = $('.pv-glow', sec);
+
+  sec.addEventListener('pointermove', e => {
+    if (reduceMotion) return;
+    const r = glow.getBoundingClientRect();
+    const x = Math.max(15, Math.min(85, (e.clientX - r.left) / r.width * 100));
+    const y = Math.max(15, Math.min(85, (e.clientY - r.top) / r.height * 100));
+    glow.style.setProperty('--gx', x + '%');
+    glow.style.setProperty('--gy', y + '%');
+    glow.classList.add('is-active');
+  });
+  sec.addEventListener('pointerleave', () => {
+    glow.style.removeProperty('--gx'); glow.style.removeProperty('--gy');
+    glow.classList.remove('is-active');
+  });
+
+  const paths = $$('path[data-draw]', sec);
+  paths.forEach(p => { const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = reduceMotion ? 0 : L; });
+  if (reduceMotion || !('IntersectionObserver' in window)) { paths.forEach(p => { p.style.strokeDashoffset = 0; }); return; }
+  new IntersectionObserver((ents, io) => ents.forEach(en => {
+    if (!en.isIntersecting) return;
+    $$('path[data-draw]', en.target).forEach(p => {
+      if (!p.getBoundingClientRect().width) return;
+      p.style.transition = `stroke-dashoffset ${p.dataset.dur}ms cubic-bezier(.6,.05,.3,1) ${p.dataset.delay}ms`;
+      requestAnimationFrame(() => { p.style.strokeDashoffset = 0; });
+    });
+    io.unobserve(en.target);
+  }), { threshold: .35 }).observe(sec);
 }
 
 /* ---------- Registration form (Serlzo) ---------- */
@@ -328,6 +361,7 @@ function initGallery() {
 
 initTimes();
 initVideo();
+initPhoneGlow();
 initSignup();
 initStickyCta();
 initReveal();

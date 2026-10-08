@@ -8,6 +8,13 @@
   font-display: swap;
   src: url('/job/fonts/geist-latin.woff2') format('woff2');
 }
+@font-face {
+  font-family: 'Caveat';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/job/fonts/caveat-latin-700.woff2') format('woff2');
+}
 /* Metric-matched local fallback so text doesn't jump when Geist arrives */
 @font-face {
   font-family: 'Geist Fallback';
@@ -305,64 +312,62 @@ input::placeholder { color: #8C8486; }
   max-width: 22ch;
   text-align: center;
 }
-.video {
-  position: relative;
-  margin-top: clamp(48px,6vw,80px);
-  aspect-ratio: 16/9;
-  border-radius: clamp(20px,2.4vw,32px);
-  overflow: hidden;
-  background: #E9E3D9;
-  isolation: isolate;
-  box-shadow: 0 1px 2px rgba(17,17,17,.05), 0 30px 60px -30px rgba(17,17,17,.25);
+/* Phone video (from the phone-video handoff; every class is prefixed .pv) */
+@property --gx{syntax:'<percentage>';inherits:false;initial-value:50%}
+@property --gy{syntax:'<percentage>';inherits:false;initial-value:50%}
+@property --ga{syntax:'<number>';inherits:false;initial-value:.55}
+
+.pv{position:relative;display:flex;justify-content:center;isolation:isolate;padding:48px 20px}
+
+/* Note + arrow */
+.pv-note{position:absolute;z-index:2;top:22%;right:calc(50% + var(--phone-h) * .28125 + 28px);width:clamp(220px,20vw,300px);display:flex;flex-direction:column;align-items:flex-end;gap:6px;transform:rotate(-4deg);pointer-events:none}
+.pv-note p{margin:0;font-family:'Caveat',cursive;font-weight:700;color:#E50050;line-height:.95;font-size:clamp(32px,2.8vw,44px);text-align:right;text-wrap:balance}
+.pv-arrow{overflow:visible}
+.pv-arrow--desk{width:72%;margin-top:4px}
+.pv-arrow--mob{display:none}
+
+/* Phone */
+.pv{--phone-h:clamp(460px,calc(100vh - 140px),760px)}
+.pv-phone{position:relative;flex:none;height:var(--phone-h);aspect-ratio:9/16;box-sizing:border-box;padding:8px;border-radius:clamp(36px,3.4vw,48px);background:#141012;box-shadow:0 2px 4px rgba(17,17,17,.08),0 50px 90px -40px rgba(17,17,17,.55)}
+.pv-screen{position:relative;width:100%;height:100%;border-radius:clamp(29px,2.8vw,40px);overflow:hidden;background:#E9E3D9;isolation:isolate}
+.pv-screen iframe,.pv-screen video{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover}
+
+/* Glow */
+.pv-glow{position:absolute;inset:-14% -40%;z-index:-1;pointer-events:none;
+  background:radial-gradient(closest-side at var(--gx) var(--gy),rgba(255,61,130,var(--ga)),rgba(255,120,90,calc(var(--ga) * .35)) 55%,rgba(255,61,130,0));
+  filter:blur(40px);animation:pvGlow 5s ease-in-out infinite;
+  transition:--gx .9s cubic-bezier(.2,.8,.2,1),--gy .9s cubic-bezier(.2,.8,.2,1),--ga .6s ease,filter .6s ease}
+.pv-glow.is-active{--ga:.85;filter:blur(28px)}
+@keyframes pvGlow{0%,100%{opacity:.75;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
+
+/* Placeholder (remove once a real video is in) */
+.pv-ph-bg{position:absolute;inset:-20%;z-index:-1;background:repeating-conic-gradient(#D3CABD 0 25%,#EEE8DE 0 50%) 0 0/110px 110px;filter:blur(14px)}
+.pv-ph-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(20,16,18,.18),rgba(20,16,18,0) 22%,rgba(20,16,18,0) 60%,rgba(20,16,18,.55))}
+.pv-bars{position:absolute;top:14px;left:14px;right:14px;display:flex;gap:4px}
+.pv-bars span{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.4)}
+.pv-bars span:first-child{background:rgba(255,255,255,.95)}
+.pv-play{position:absolute;inset:0;margin:auto;width:76px;height:76px;border:0;border-radius:50%;background:#111;color:#FAF8F3;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .3s,background .3s}
+.pv-play:hover{transform:scale(1.08);background:#E50050}
+.pv-play:focus-visible{outline:2px solid #E50050;outline-offset:4px}
+.pv-play svg{width:30%;height:30%;margin-left:6%}
+.pv-cap{position:absolute;left:16px;right:16px;bottom:18px;display:flex;flex-direction:column;gap:6px;color:#fff}
+.pv-handle{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;letter-spacing:-.01em}
+.pv-handle img{width:28px;height:28px;border-radius:50%;object-fit:cover;border:1.5px solid #fff}
+.pv-cap p{margin:0;font-size:14px;line-height:1.35;letter-spacing:-.01em}
+
+/* Mobile (<640px): note above phone, width-based phone */
+@media (max-width:639px){
+  .pv{flex-direction:column;align-items:center}
+  .pv-note{position:relative;right:auto;top:auto;align-self:flex-start;margin:0 0 72px 6%;width:auto;align-items:flex-start}
+  .pv-note p{font-size:32px;text-align:left}
+  .pv-arrow--desk{display:none}
+  .pv-arrow--mob{display:block;position:absolute;left:100%;top:18px;width:84px}
+  .pv-phone{height:auto;width:clamp(260px,72vw,340px)}
 }
-.video-play {
-  appearance: none;
-  border: 0;
-  padding: 0;
-  font: inherit;
+@media (prefers-reduced-motion:reduce){
+  .pv-glow{animation:none;transition:none}
+  .pv-arrow path{stroke-dashoffset:0!important;transition:none!important}
 }
-.video-play:focus-visible { outline: 3px solid var(--pink); outline-offset: 4px; }
-.video iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-.video-checker {
-  position: absolute;
-  inset: -15%;
-  z-index: -1;
-  background: repeating-conic-gradient(#D3CABD 0 25%,#EEE8DE 0 50%) 0 0/140px 140px;
-  filter: blur(14px);
-}
-.video-vignette {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: radial-gradient(60% 70% at 50% 50%,rgba(250,248,243,0),rgba(40,34,30,.18));
-}
-.video-center {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.play {
-  display: flex;
-  width: clamp(72px,7vw,104px);
-  height: clamp(72px,7vw,104px);
-  border-radius: 50%;
-  background: var(--ink);
-  color: var(--bg);
-  align-items: center;
-  justify-content: center;
-  transition: transform .3s, background .3s;
-  cursor: pointer;
-}
-.play:hover { transform: scale(1.06); background: var(--pink); }
-.play svg { width: 30%; height: 30%; margin-left: 6%; }
 
 .for-you-title {
   margin: clamp(64px,8vw,112px) 0 clamp(32px,4vw,56px);
@@ -899,6 +904,8 @@ input::placeholder { color: #8C8486; }
   .btn-dark { width: 100%; justify-content: space-between; }
 
   .for-you { padding-top: 24px; }
+  /* The phone video spans the full screen width on mobile, as in its handoff */
+  .for-you .pv { margin-inline: calc(-1 * var(--gutter)); }
 }
 
 /* ---------- Reduced motion ---------- */

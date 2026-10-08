@@ -8,12 +8,12 @@ Plain HTML, CSS and vanilla JS with no build step. The site root must be the rep
 - `styles.css`: styles (mobile < 640px, tablet 640–1099px, desktop ≥ 1100px)
 - `main.js`: local event time, scroll reveal, animated backgrounds, application-kit scaling, about gallery, lazy video and form loading
 - `assets/`: WebP photos at three sizes (`-thumb`, `-600`, `-lg`) with JPEG fallbacks, icons, and the social preview image
-- `fonts/`: Geist (latin, variable weight), served from the site itself
+- `fonts/`: Geist (latin, variable weight) and Caveat Bold (latin subset, for the handwritten note), served from the site itself
 - `/robots.txt` and `/sitemap.xml` live at the repository root
 
 ## Settings
 
-- **Video:** set `CONFIG.videoUrl` at the top of `main.js` to a YouTube link. The player only loads when someone presses play.
+- **Video:** the intro video sits in a phone frame under the quote. Set `CONFIG.videoUrl` at the top of `main.js` to a vertical (9:16) YouTube Short. The player only loads when someone presses play. The handwritten note ("give me 60s to tell you how") is in `index.html`.
 - **Registration form:** the Serlzo embed in the `#register` section (`data-serlzo-form="f9dd63874dc27eadd3"`). Its script URL is `SERLZO_EMBED` in `main.js`, and it loads as the visitor scrolls near the form. Edit fields and the confirmation message in Serlzo.
 
 ## Built for slow connections
