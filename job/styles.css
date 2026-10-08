@@ -236,7 +236,7 @@ input::placeholder { color: #8C8486; }
 .hero-title {
   margin: 0;
   font-weight: 500;
-  font-size: clamp(46px,7.4vw,120px);
+  font-size: clamp(46px,7.4vw,112px);
   line-height: .94;
   letter-spacing: -.055em;
   flex: 1 1 560px;
