@@ -239,6 +239,19 @@ function initSignup() {
     script.async = true;
     document.body.appendChild(script);
   };
+  // When Serlzo reports a successful registration, swap its form for the "You're in" card (thanks.js).
+  const serlzoOrigin = new URL(SERLZO_EMBED).origin;
+  const formId = $('[data-serlzo-form]', target)?.getAttribute('data-serlzo-form');
+  window.addEventListener('message', e => {
+    const data = e.data || {};
+    if (e.origin !== serlzoOrigin || data.type !== 'serlzo-form-submitted') return;
+    if (formId && data.publicId && data.publicId !== formId) return;
+    if (target.classList.contains('thanks') || !window.mountThanks) return;
+    window.mountThanks(target);
+    target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+    $('.thanks-title', target).focus({ preventScroll: true });
+  });
+
   if (!('IntersectionObserver' in window)) return load();
   const io = new IntersectionObserver(es => {
     if (es.some(e => e.isIntersecting)) { io.disconnect(); load(); }
