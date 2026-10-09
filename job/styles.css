@@ -333,6 +333,10 @@ input::placeholder { color: #8C8486; }
 .pv-screen iframe,.pv-screen video{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover}
 .pv-cover{position:absolute;inset:0;z-index:-1;width:100%;height:100%;object-fit:cover;display:block}
 .pv-screen iframe{z-index:5;opacity:0;transition:opacity .5s ease}
+/* Size the player to cover the screen like object-fit: cover, so YouTube adds no black bars
+   (the screen is a little narrower than 9:16 because of the bezel); the overflow is clipped. */
+.pv-screen{container-type:size}
+.pv-screen iframe{inset:auto;left:50%;top:50%;width:max(100cqw,100cqh * 9 / 16);height:max(100cqh,100cqw * 16 / 9);transform:translate(-50%,-50%)}
 .pv-screen iframe.is-on{opacity:1}
 
 /* Glow */
