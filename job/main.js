@@ -254,7 +254,7 @@ function initSignup() {
   const serlzoOrigin = new URL(SERLZO_EMBED).origin;
   const formId = $('[data-serlzo-form]', target)?.getAttribute('data-serlzo-form');
   const pick = (obj, keys) => {
-    for (const src of [obj, obj.data, obj.fields, obj.values, obj.submission]) {
+    for (const src of [obj, obj.data, obj.fields, obj.values, obj.answers, obj.submission, obj.submission && obj.submission.answers]) {
       if (!src || typeof src !== 'object') continue;
       for (const k of keys) if (typeof src[k] === 'string' && src[k]) return src[k];
     }
@@ -266,8 +266,8 @@ function initSignup() {
     if (formId && data.publicId && data.publicId !== formId) return;
     if (!window.showThanks) return;
     const ty = window.showThanks({
-      name: pick(data, ['first_name', 'firstName', 'name', 'full_name', 'fullName']),
-      email: pick(data, ['email', 'email_address', 'emailAddress'])
+      name: pick(data, ['first_name', 'firstName', 'name', 'full_name', 'fullName', 'field_full_name']),
+      email: pick(data, ['email', 'email_address', 'emailAddress', 'field_email'])
     });
     if (ty) document.getElementById('register').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
   });
