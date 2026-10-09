@@ -3,7 +3,7 @@
 const CONFIG = {
   // Paste a YouTube link (a vertical 9:16 Short works best in the phone frame)
   // to replace the placeholder with the video.
-  videoUrl: ''
+  videoUrl: 'https://youtu.be/cN0fSJf39t8'
 };
 
 const EVENT_START = new Date(Date.UTC(2026, 9, 24, 19, 0)); // 8pm BST
