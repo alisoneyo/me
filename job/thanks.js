@@ -80,11 +80,11 @@ const THANKS = {
       title.textContent = 'You’re in!';
     }
     const sub = ty.querySelector('.ty-sub');
-    sub.append('Your joining link has been sent to ');
+    sub.append('I just sent an email to ');
     const strong = document.createElement('span');
     strong.className = 'ty-email';
     strong.textContent = mail || 'your inbox';
-    sub.append(strong, '.');
+    sub.append(strong, ' with your joining link and a little note from me. Keep an eye out for it.');
 
     form.hidden = true;
     form.replaceChildren(); // drop the Serlzo iframe
