@@ -896,27 +896,26 @@ input::placeholder { color: #8C8486; }
 
 .ty-actions {
   position: relative;
-  width: 100%;
   max-width: 600px;
   margin-top: clamp(36px, 4.4vw, 56px);
   display: flex;
   justify-content: center;
   gap: 12px;
 }
-.ty-cal, .ty-share { flex: 1 1 auto; }
+.ty-cal, .ty-share { flex: 0 0 auto; }
 
+/* Same size as the hero's "Reserve my free seat" button (.btn-dark) */
 .ty-pill {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  width: 100%;
+  justify-content: flex-start;
+  gap: 14px;
   box-sizing: border-box;
-  padding: 12px 12px 12px 26px;
+  padding: 17px 18px 17px 28px;
   border: 0;
   border-radius: 999px;
   font: inherit;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 500;
   white-space: nowrap;
   cursor: pointer;
@@ -927,14 +926,14 @@ input::placeholder { color: #8C8486; }
 .ty-pill-icon {
   display: inline-flex;
   flex: none;
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   align-items: center;
   justify-content: center;
   transition: background .25s, color .25s;
 }
-.ty-pill-icon svg { width: 20px; height: 20px; }
+.ty-pill-icon svg { width: 15px; height: 15px; }
 
 /* Add to calendar */
 .ty-cal-toggle { background: #E50050; color: #fff; }
@@ -942,7 +941,7 @@ input::placeholder { color: #8C8486; }
 .ty-cal-toggle:hover { background: #FAF8F3; color: #111; }
 .ty-cal-options {
   display: flex;
-  min-height: 64px;
+  min-height: 62px;
   border-radius: 999px;
   overflow: hidden;
   background: #E50050;
@@ -955,9 +954,9 @@ input::placeholder { color: #8C8486; }
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 18px;
+  padding: 0 22px;
   color: #fff;
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 500;
   white-space: nowrap;
   text-decoration: none;
@@ -967,7 +966,7 @@ input::placeholder { color: #8C8486; }
 .ty-cal-options a:hover, .ty-cal-options a:focus-visible { background: #FAF8F3; color: #111; outline: none; }
 
 /* Share */
-.ty-share { width: auto; background: transparent; color: #FAF8F3; border: 1px solid rgba(250,248,243,.3); }
+.ty-share { padding: 16px 17px 16px 27px; background: transparent; color: #FAF8F3; border: 1px solid rgba(250,248,243,.3); } /* 1px less padding to make up for the border */
 .ty-share .ty-pill-icon { background: #FAF8F3; color: #111; }
 .ty-share:hover { background: #FAF8F3; color: #111; border-color: #FAF8F3; }
 .ty-share:hover .ty-pill-icon { background: #111; color: #FAF8F3; }
@@ -1005,8 +1004,10 @@ input::placeholder { color: #8C8486; }
   .ty-arrow--narrow { width: 44px; margin: 0 0 4px 64px; }
 }
 @media (max-width: 639.98px) {
-  .ty-actions { flex-direction: column; flex-wrap: nowrap; }
+  /* Full width on phones, like the hero button */
+  .ty-actions { width: 100%; flex-direction: column; flex-wrap: nowrap; }
   .ty-cal, .ty-actions > .ty-share { flex: none; width: 100%; }
+  .ty-pill { width: 100%; justify-content: space-between; }
 }
 
 /* Motion */

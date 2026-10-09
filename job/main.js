@@ -243,7 +243,9 @@ function initSignup() {
   // Route 1: Serlzo redirects back here with ?registered=1&name=…&email=…#register.
   const params = new URLSearchParams(location.search);
   if (params.get('registered') === '1' && window.showThanks) {
-    window.showThanks({ name: params.get('name'), email: params.get('email') });
+    // Accept Serlzo's own field names too, and ignore placeholders it left unfilled, e.g. "{first_name}".
+    const val = (...keys) => keys.map(k => params.get(k) || '').find(v => v && !/[{}]/.test(v)) || '';
+    window.showThanks({ name: val('name', 'first_name', 'full_name', 'field_full_name'), email: val('email', 'field_email') });
     history.replaceState(null, '', location.pathname);
     document.getElementById('register').scrollIntoView({ block: 'start' });
     return; // no need to load the form
