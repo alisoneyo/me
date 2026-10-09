@@ -62,23 +62,69 @@ function initTimes() {
 
 /* ---------- Phone video ---------- */
 
-// The YouTube player (~1MB) only loads when someone presses play. Use a vertical (9:16) Short.
+// The video starts muted once the phone is mostly on screen (browsers only allow muted autoplay),
+// pauses when scrolled away and resumes on return. Pressing play first starts it with sound.
+// With reduced motion, data saver or 2G it waits for a press, so nothing heavy loads on its own.
+// The cover image stays visible until YouTube reports the video is playing.
 function initVideo() {
   const url = (CONFIG.videoUrl || '').trim();
   if (!url) return;
   const id = (url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/) || [])[1];
-  const src = id ? `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1&autoplay=1` : url;
-  const screen = $('.pv-screen');
+  if (!id) return;
+  const YT_ORIGIN = 'https://www.youtube-nocookie.com';
+  const phone = $('.pv-phone');
+  const screen = $('.pv-screen', phone);
   const play = $('.pv-play', screen);
-  play.disabled = false;
-  play.addEventListener('click', () => {
-    const iframe = document.createElement('iframe');
-    iframe.src = src;
+  let iframe = null, wantPlaying = false;
+
+  const send = func => {
+    if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args: [] }), YT_ORIGIN);
+  };
+  const reveal = () => {
+    if (!iframe || iframe.classList.contains('is-on')) return;
+    iframe.classList.add('is-on');
+    $$(':scope > :not(iframe):not(picture):not(.pv-glow)', screen).forEach(el => el.remove());
+  };
+
+  const load = muted => {
+    if (iframe) { if (!muted) { send('unMute'); send('playVideo'); } return; }
+    wantPlaying = true;
+    const params = new URLSearchParams({
+      autoplay: 1, mute: muted ? 1 : 0, playsinline: 1, rel: 0, modestbranding: 1,
+      loop: 1, playlist: id, enablejsapi: 1, origin: location.origin
+    });
+    iframe = document.createElement('iframe');
+    iframe.src = `${YT_ORIGIN}/embed/${id}?${params}`;
     iframe.title = 'A quick word from Alison';
     iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
     iframe.allowFullscreen = true;
-    screen.replaceChildren(iframe);
-  }, { once: true });
+    iframe.addEventListener('load', () => {
+      // Ask the player to report its state so we know when the video is really playing.
+      iframe.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 'pv', channel: 'widget' }), YT_ORIGIN);
+      setTimeout(reveal, 3000); // fallback, e.g. if the browser blocked autoplay: show YouTube's own play button
+    });
+    screen.appendChild(iframe);
+  };
+
+  window.addEventListener('message', e => {
+    if (!iframe || e.source !== iframe.contentWindow) return;
+    let data; try { data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch (err) { return; }
+    const state = data && data.info && data.info.playerState;
+    if (state === 1) reveal(); // playing
+  });
+
+  play.disabled = false;
+  play.addEventListener('click', () => load(false));
+
+  if (reduceMotion || lowData || !('IntersectionObserver' in window)) return;
+  new IntersectionObserver(([e]) => {
+    if (e.isIntersecting) {
+      if (!iframe) load(true);
+      else if (!wantPlaying) { wantPlaying = true; send('playVideo'); }
+    } else if (iframe && wantPlaying) {
+      wantPlaying = false; send('pauseVideo');
+    }
+  }, { threshold: .6 }).observe(phone);
 }
 
 // Glow follows the pointer near the phone; the hand-drawn arrow draws itself on scroll.

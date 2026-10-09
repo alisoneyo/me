@@ -138,8 +138,11 @@
       <div class="pv-phone">
         <div class="pv-glow" aria-hidden="true"></div>
         <div class="pv-screen">
-          <!-- Placeholder: replaced by the video when CONFIG.videoUrl is set in main.js (use a vertical 9:16 YouTube Short) -->
-          <div class="pv-ph-bg"></div>
+          <!-- Cover image from the video; main.js swaps in the YouTube player (CONFIG.videoUrl) -->
+          <picture>
+            <source type="image/webp" srcset="/job/assets/video-cover-440.webp 440w, /job/assets/video-cover-880.webp 880w" sizes="(max-width: 639px) 72vw, 430px">
+            <img class="pv-cover" src="/job/assets/video-cover-880.jpg" alt="" width="880" height="1564" loading="lazy" decoding="async">
+          </picture>
           <div class="pv-ph-shade"></div>
           <div class="pv-bars"><span></span><span></span><span></span></div>
           <button class="pv-play" type="button" aria-label="Play video" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4 L20 12 L6 20 Z" fill="currentColor"/></svg></button>
