@@ -101,7 +101,12 @@ function initVideo() {
   };
   // Captions off by default (viewers can still turn them on in the player).
   let captionsOff = false;
-  const hideCaptions = () => { send('unloadModule', ['captions']); send('unloadModule', ['cc']); };
+  const hideCaptions = () => {
+    send('setOption', ['captions', 'track', {}]); // the API's "captions off"
+    send('unloadModule', ['captions']); send('unloadModule', ['cc']);
+  };
+  // The captions module can load a moment after playback starts, so repeat a few times.
+  const hideCaptionsSoon = () => [0, 800, 2000, 4000].forEach(ms => setTimeout(hideCaptions, ms));
   const reveal = () => {
     if (!iframe || iframe.classList.contains('is-on')) return;
     iframe.classList.add('is-on');
@@ -145,7 +150,7 @@ function initVideo() {
     const state = data && data.info && data.info.playerState;
     if (state === 1) {
       reveal(); // playing
-      if (!captionsOff) { captionsOff = true; hideCaptions(); } // again once playback starts, when the captions module loads
+      if (!captionsOff) { captionsOff = true; hideCaptionsSoon(); } // again once playback starts, when the captions module loads
     }
   });
 
