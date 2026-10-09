@@ -240,13 +240,20 @@ function initSignup() {
     document.body.appendChild(script);
   };
   // After registering, the form area becomes the "You're in" state (thanks.js).
-  // Route 1: Serlzo redirects back here with ?registered=1&name=…&email=…#register.
+  // Route 1: Serlzo redirects back here after submit (redirect URL: /job/?registered=1).
+  // Serlzo appends the answers as URL parameters; accept whatever it calls them.
   const params = new URLSearchParams(location.search);
-  if (params.get('registered') === '1' && window.showThanks) {
-    // Accept Serlzo's own field names too, and ignore placeholders it left unfilled, e.g. "{first_name}".
-    const val = (...keys) => keys.map(k => params.get(k) || '').find(v => v && !/[{}]/.test(v)) || '';
-    window.showThanks({ name: val('name', 'first_name', 'full_name', 'field_full_name'), email: val('email', 'field_email') });
-    history.replaceState(null, '', location.pathname);
+  const clean = v => (v && !/[{}]/.test(v) ? v.trim() : ''); // ignore unfilled placeholders like {first_name}
+  const findParam = (preferred, pattern) => {
+    for (const k of preferred) if (clean(params.get(k))) return clean(params.get(k));
+    for (const [k, v] of params) if (pattern.test(k) && clean(v)) return clean(v);
+    return '';
+  };
+  const regEmail = findParam(['email', 'field_email', 'email_address'], /e-?mail/i);
+  const regName = findParam(['name', 'first_name', 'full_name', 'field_full_name'], /name/i);
+  if ((params.get('registered') === '1' || /@/.test(regEmail)) && window.showThanks) {
+    window.showThanks({ name: regName, email: regEmail });
+    history.replaceState(null, '', location.pathname); // don't leave their details in the address bar
     document.getElementById('register').scrollIntoView({ block: 'start' });
     return; // no need to load the form
   }
