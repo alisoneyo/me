@@ -13,7 +13,7 @@ Plain HTML, CSS and vanilla JS with no build step. The site root must be the rep
 
 ## Settings
 
-- **Video:** the intro video sits in a phone frame under the quote. Set `CONFIG.videoUrl` at the top of `main.js` to a vertical (9:16) YouTube Short. The player only loads when someone presses play. The handwritten note ("give me 98s to tell you how") is in `index.html`.
+- **Video:** the intro video sits in a phone frame under the quote. Set `CONFIG.videoUrl` at the top of `main.js` to a vertical (9:16) YouTube Short. The player only loads when someone presses play. The handwritten note ("give me 96s to tell you how") is in `index.html`.
 - **Registration form:** the Serlzo embed in the `#register` section (`data-serlzo-form="f9dd63874dc27eadd3"`). Its script URL is `SERLZO_EMBED` in `main.js`, and it loads as the visitor scrolls near the form. Edit fields and the confirmation message in Serlzo.
 
 ## Built for slow connections
