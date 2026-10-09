@@ -936,34 +936,9 @@ input::placeholder { color: #8C8486; }
 .ty-pill-icon svg { width: 15px; height: 15px; }
 
 /* Add to calendar */
-.ty-cal-toggle { background: #E50050; color: #fff; }
-.ty-cal-toggle .ty-pill-icon { background: #fff; color: #111; }
-.ty-cal-toggle:hover { background: #FAF8F3; color: #111; }
-.ty-cal-options {
-  display: flex;
-  min-height: 62px;
-  border-radius: 999px;
-  overflow: hidden;
-  background: #E50050;
-  animation: ty-split .35s cubic-bezier(.2,.8,.2,1) both;
-}
-.ty-cal-options[hidden] { display: none; }
-@keyframes ty-split { from { opacity: .4; transform: scaleX(.96); } }
-.ty-cal-options a {
-  flex: 1 1 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 22px;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 500;
-  white-space: nowrap;
-  text-decoration: none;
-  transition: background .25s, color .25s;
-}
-.ty-cal-options a + a { border-left: 1px solid rgba(255,255,255,.35); }
-.ty-cal-options a:hover, .ty-cal-options a:focus-visible { background: #FAF8F3; color: #111; outline: none; }
+.ty-cal { background: #E50050; color: #fff; text-decoration: none; }
+.ty-cal .ty-pill-icon { background: #fff; color: #111; }
+.ty-cal:hover { background: #FAF8F3; color: #111; }
 
 /* Share */
 .ty-share { padding: 16px 17px 16px 27px; background: transparent; color: #FAF8F3; border: 1px solid rgba(250,248,243,.3); } /* 1px less padding to make up for the border */
@@ -1006,7 +981,7 @@ input::placeholder { color: #8C8486; }
 @media (max-width: 639.98px) {
   /* Full width on phones, like the hero button */
   .ty-actions { width: 100%; flex-direction: column; flex-wrap: nowrap; }
-  .ty-cal, .ty-actions > .ty-share { flex: none; width: 100%; }
+  .ty-actions > .ty-cal, .ty-actions > .ty-share { flex: none; width: 100%; }
   .ty-pill { width: 100%; justify-content: space-between; }
 }
 
@@ -1021,7 +996,7 @@ input::placeholder { color: #8C8486; }
 .ty-draw-head { animation-duration: .35s; animation-delay: 1.95s; }
 @keyframes ty-draw { to { stroke-dashoffset: 0; } }
 @media (prefers-reduced-motion: reduce) {
-  .ty-title, .ty-sub, .ty-actions > .ty-cal, .ty-actions > .ty-share, .ty-note p, .ty-cal-options { animation: none; }
+  .ty-title, .ty-sub, .ty-actions > .ty-cal, .ty-actions > .ty-share, .ty-note p { animation: none; }
   .ty-draw { animation: none; stroke-dashoffset: 0; }
 }
 

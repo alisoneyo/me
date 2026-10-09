@@ -40,13 +40,7 @@ const THANKS = {
     <h3 class="ty-title"></h3>
     <p class="ty-sub"></p>
     <div class="ty-actions">
-      <div class="ty-cal">
-        <button class="ty-pill ty-cal-toggle" type="button" aria-expanded="false" aria-controls="ty-cal-options">Add to calendar<span class="ty-pill-icon">${calIcon}</span></button>
-        <div class="ty-cal-options" id="ty-cal-options" hidden>
-          <a href="${googleUrl}" target="_blank" rel="noopener">Google</a>
-          <a href="${icsUrl}" download="alison-eyo-webinar.ics">Apple / Outlook</a>
-        </div>
-      </div>
+      <a class="ty-pill ty-cal" href="#" rel="noopener">Add to calendar<span class="ty-pill-icon">${calIcon}</span></a>
       <button class="ty-pill ty-share" type="button"><span class="ty-share-label">Share</span><span class="ty-pill-icon">${linkIcon}</span></button>
       <div class="ty-note" aria-hidden="true">
         <svg class="ty-arrow ty-arrow--wide" viewBox="0 0 120 120"><g fill="none" stroke="#FF3D82" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path class="ty-draw" pathLength="1" d="M88 6 C 84 44, 62 82, 14 104"/><path class="ty-draw ty-draw-head" pathLength="1" d="M34 100 L 14 104 L 24 86"/></g></svg>
@@ -88,15 +82,15 @@ const THANKS = {
     form.replaceChildren(); // drop the Serlzo iframe
     form.before(ty);
 
-    // Add to calendar: the pill splits in place into Google | Apple / Outlook
-    const toggle = ty.querySelector('.ty-cal-toggle');
-    const options = ty.querySelector('.ty-cal-options');
-    toggle.addEventListener('click', () => {
-      toggle.setAttribute('aria-expanded', 'true');
-      toggle.hidden = true;
-      options.hidden = false;
-      options.querySelector('a').focus();
-    });
+    // Add to calendar: Apple devices get the .ics file (opens in Apple Calendar), everyone else Google Calendar.
+    const cal = ty.querySelector('.ty-cal');
+    if (/iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent)) {
+      cal.href = icsUrl;
+      cal.setAttribute('download', 'alison-eyo-webinar.ics');
+    } else {
+      cal.href = googleUrl;
+      cal.target = '_blank';
+    }
 
     // Share: native share sheet where available, otherwise copy the link
     const share = ty.querySelector('.ty-share');
