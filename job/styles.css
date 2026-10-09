@@ -332,12 +332,25 @@ input::placeholder { color: #8C8486; }
 .pv-screen{position:relative;width:100%;height:100%;border-radius:clamp(29px,2.8vw,40px);overflow:hidden;background:#E9E3D9;isolation:isolate}
 .pv-screen iframe,.pv-screen video{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover}
 /* Sound toggle, below the phone (outside the YouTube player, which runs without controls) */
-.pv-sound{position:absolute;left:50%;top:calc(100% + 14px);transform:translateX(-50%);display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 13px;border:0;border-radius:999px;background:#141012;color:#FAF8F3;font:inherit;font-size:14px;font-weight:500;letter-spacing:-.01em;white-space:nowrap;cursor:pointer;transition:background .25s}
+.pv-sound{position:absolute;left:50%;top:calc(100% + 44px);transform:translateX(-50%);display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 13px;border:0;border-radius:999px;background:#141012;color:#FAF8F3;font:inherit;font-size:14px;font-weight:500;letter-spacing:-.01em;white-space:nowrap;cursor:pointer;transition:background .25s}
 .pv-sound:hover{background:#E50050}
 .pv-sound:focus-visible{outline:2px solid #E50050;outline-offset:3px}
 .pv-sound svg{width:16px;height:16px}
 .pv-sound .pv-sound-on,.pv-sound[aria-pressed="true"] .pv-sound-off{display:none}
 .pv-sound[aria-pressed="true"] .pv-sound-on{display:block}
+/* Timeline, below the phone (outside the player). Hover-only where hover exists. */
+.pv-timeline{position:absolute;left:8px;right:8px;top:100%;padding-top:12px;display:flex;align-items:center;gap:10px;opacity:0;transition:opacity .25s ease}
+.pv-phone:hover .pv-timeline,.pv-timeline:focus-within{opacity:1}
+@media (hover:none){.pv-timeline{opacity:1}}
+.pv-time{flex:none;min-width:2.6em;font-size:12px;font-weight:500;color:#5C5457;font-variant-numeric:tabular-nums;letter-spacing:0}
+.pv-time-total{text-align:right}
+.pv-seek{--p:0%;flex:1;min-width:0;height:18px;margin:0;background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer}
+.pv-seek::-webkit-slider-runnable-track{height:4px;border-radius:4px;background:linear-gradient(#E50050,#E50050) 0/var(--p) 100% no-repeat,rgba(17,17,17,.14)}
+.pv-seek::-moz-range-track{height:4px;border-radius:4px;background:rgba(17,17,17,.14)}
+.pv-seek::-moz-range-progress{height:4px;border-radius:4px;background:#E50050}
+.pv-seek::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;margin-top:-4px;border:0;border-radius:50%;background:#E50050;box-shadow:0 0 0 3px rgba(229,0,80,.18)}
+.pv-seek::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:50%;background:#E50050;box-shadow:0 0 0 3px rgba(229,0,80,.18)}
+.pv-seek:focus-visible{outline:2px solid #E50050;outline-offset:2px;border-radius:4px}
 .pv-cover{position:absolute;inset:0;z-index:-1;width:100%;height:100%;object-fit:cover;display:block}
 .pv-screen iframe{z-index:5;opacity:0;transition:opacity .5s ease}
 /* Size the player to cover the screen like object-fit: cover, so YouTube adds no black bars
@@ -916,7 +929,7 @@ input::placeholder { color: #8C8486; }
 
   .for-you { padding-top: 24px; }
   /* The phone video spans the full screen width on mobile, as in its handoff */
-  .for-you .pv { margin-inline: calc(-1 * var(--gutter)); }
+  .for-you .pv { margin-inline: calc(-1 * var(--gutter)); padding-bottom: 88px; } /* room for the timeline and sound pill */
 }
 
 /* ---------- Reduced motion ---------- */

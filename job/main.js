@@ -77,7 +77,18 @@ function initVideo() {
   const play = $('.pv-play', screen);
   const sound = $('.pv-sound', phone);
   const soundLabel = $('span', sound);
-  let iframe = null, wantPlaying = false, muted = true;
+  const timeline = $('.pv-timeline', phone);
+  const seek = $('.pv-seek', timeline);
+  const timeNow = $('.pv-time-now', timeline);
+  const timeTotal = $('.pv-time-total', timeline);
+  let iframe = null, wantPlaying = false, muted = true, restarted = false, dragging = false, duration = 0;
+
+  const fmt = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
+  const showTime = t => {
+    seek.value = t;
+    timeNow.textContent = fmt(t);
+    seek.style.setProperty('--p', duration ? (t / duration * 100) + '%' : '0%');
+  };
 
   const setMuted = m => {
     muted = m;
@@ -95,6 +106,7 @@ function initVideo() {
     if (!iframe || iframe.classList.contains('is-on')) return;
     iframe.classList.add('is-on');
     sound.hidden = false;
+    timeline.hidden = false;
     $$(':scope > :not(iframe):not(picture):not(.pv-glow)', screen).forEach(el => el.remove());
   };
 
@@ -103,7 +115,7 @@ function initVideo() {
     wantPlaying = true;
     setMuted(muted);
     const params = new URLSearchParams({
-      autoplay: 1, mute: muted ? 1 : 0, controls: 0, playsinline: 1, rel: 0, modestbranding: 1, iv_load_policy: 3,
+      autoplay: 1, mute: muted ? 1 : 0, controls: 0, disablekb: 1, playsinline: 1, rel: 0, modestbranding: 1, iv_load_policy: 3,
       loop: 1, playlist: id, enablejsapi: 1, origin: location.origin, cc_load_policy: 0
     });
     iframe = document.createElement('iframe');
@@ -123,7 +135,13 @@ function initVideo() {
     if (!iframe || e.source !== iframe.contentWindow) return;
     let data; try { data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch (err) { return; }
     if (data && data.event === 'onReady') hideCaptions();
-    if (data && data.info && typeof data.info.muted === 'boolean') setMuted(data.info.muted);
+    const info = data && data.info;
+    if (info && info.duration > 0 && info.duration !== duration) {
+      duration = info.duration;
+      seek.max = duration;
+      timeTotal.textContent = fmt(duration);
+    }
+    if (info && typeof info.currentTime === 'number' && !dragging) showTime(info.currentTime);
     const state = data && data.info && data.info.playerState;
     if (state === 1) {
       reveal(); // playing
@@ -132,12 +150,29 @@ function initVideo() {
   });
 
   play.disabled = false;
-  play.addEventListener('click', () => load(false));
+  play.addEventListener('click', () => { restarted = true; load(false); });
 
-  // First tap for sound restarts the video so it's heard from the beginning.
+  // The first time sound goes on, restart so the video is heard from the beginning.
+  // After that the button only mutes and unmutes.
   sound.addEventListener('click', () => {
-    if (muted) { send('unMute'); send('seekTo', [0, true]); send('playVideo'); wantPlaying = true; setMuted(false); }
-    else { send('mute'); setMuted(true); }
+    if (muted) {
+      send('unMute');
+      if (!restarted) { restarted = true; send('seekTo', [0, true]); showTime(0); }
+      send('playVideo'); wantPlaying = true; setMuted(false);
+    } else { send('mute'); setMuted(true); }
+  });
+
+  // Dragging the timeline previews the position; releasing it seeks there.
+  seek.addEventListener('input', () => {
+    dragging = true;
+    showTime(+seek.value);
+    send('seekTo', [+seek.value, false]);
+  });
+  seek.addEventListener('change', () => {
+    dragging = false;
+    restarted = true; // a deliberate seek shouldn't be undone by the first tap for sound
+    send('seekTo', [+seek.value, true]);
+    send('playVideo'); wantPlaying = true;
   });
 
   if (reduceMotion || lowData || !('IntersectionObserver' in window)) return;
