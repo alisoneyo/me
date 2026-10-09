@@ -891,9 +891,11 @@ input::placeholder { color: #8C8486; }
   line-height: 1.5;
   letter-spacing: -.01em;
   color: #C9BFC2;
-  text-wrap: pretty; /* no single word on the last line */
+  text-wrap: balance;
 }
 .ty-email { color: #FAF8F3; overflow-wrap: anywhere; }
+.ty-keep { white-space: nowrap; }
+.ty-sub-last { display: block; }
 
 .ty-actions {
   position: relative;

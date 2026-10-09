@@ -80,11 +80,12 @@ const THANKS = {
       title.textContent = 'You’re in!';
     }
     const sub = ty.querySelector('.ty-sub');
-    sub.append('I just sent an email to ');
-    const strong = document.createElement('span');
-    strong.className = 'ty-email';
-    strong.textContent = mail || 'your inbox';
-    sub.append(strong, ' with your joining link and a little note from me. Keep an eye out for it.');
+    // Break at phrases: keep "with your joining link" and "a little note from me." whole,
+    // and give "Keep an eye out for it." its own line.
+    const span = (cls, text) => { const el = document.createElement('span'); el.className = cls; el.textContent = text; return el; };
+    sub.append('I just sent an email to ', span(mail ? 'ty-email' : 'ty-email ty-keep', mail || 'your inbox'), ' ',
+      span('ty-keep', 'with your joining link'), ' and ', span('ty-keep', 'a little note from me.'),
+      span('ty-sub-last', 'Keep an eye out for it.'));
 
     form.hidden = true;
     form.replaceChildren(); // drop the Serlzo iframe
