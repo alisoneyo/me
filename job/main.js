@@ -77,9 +77,12 @@ function initVideo() {
   const play = $('.pv-play', screen);
   let iframe = null, wantPlaying = false;
 
-  const send = func => {
-    if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args: [] }), YT_ORIGIN);
+  const send = (func, args = []) => {
+    if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args }), YT_ORIGIN);
   };
+  // Captions off by default (viewers can still turn them on in the player).
+  let captionsOff = false;
+  const hideCaptions = () => { send('unloadModule', ['captions']); send('unloadModule', ['cc']); };
   const reveal = () => {
     if (!iframe || iframe.classList.contains('is-on')) return;
     iframe.classList.add('is-on');
@@ -91,7 +94,7 @@ function initVideo() {
     wantPlaying = true;
     const params = new URLSearchParams({
       autoplay: 1, mute: muted ? 1 : 0, playsinline: 1, rel: 0, modestbranding: 1,
-      loop: 1, playlist: id, enablejsapi: 1, origin: location.origin
+      loop: 1, playlist: id, enablejsapi: 1, origin: location.origin, cc_load_policy: 0
     });
     iframe = document.createElement('iframe');
     iframe.src = `${YT_ORIGIN}/embed/${id}?${params}`;
@@ -109,8 +112,12 @@ function initVideo() {
   window.addEventListener('message', e => {
     if (!iframe || e.source !== iframe.contentWindow) return;
     let data; try { data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch (err) { return; }
+    if (data && data.event === 'onReady') hideCaptions();
     const state = data && data.info && data.info.playerState;
-    if (state === 1) reveal(); // playing
+    if (state === 1) {
+      reveal(); // playing
+      if (!captionsOff) { captionsOff = true; hideCaptions(); } // again once playback starts, when the captions module loads
+    }
   });
 
   play.disabled = false;
