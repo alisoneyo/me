@@ -75,7 +75,15 @@ function initVideo() {
   const phone = $('.pv-phone');
   const screen = $('.pv-screen', phone);
   const play = $('.pv-play', screen);
-  let iframe = null, wantPlaying = false;
+  const sound = $('.pv-sound', phone);
+  const soundLabel = $('span', sound);
+  let iframe = null, wantPlaying = false, muted = true;
+
+  const setMuted = m => {
+    muted = m;
+    sound.setAttribute('aria-pressed', String(!m));
+    soundLabel.textContent = m ? 'Tap for sound' : 'Sound on';
+  };
 
   const send = (func, args = []) => {
     if (iframe && iframe.contentWindow) iframe.contentWindow.postMessage(JSON.stringify({ event: 'command', func, args }), YT_ORIGIN);
@@ -86,14 +94,16 @@ function initVideo() {
   const reveal = () => {
     if (!iframe || iframe.classList.contains('is-on')) return;
     iframe.classList.add('is-on');
+    sound.hidden = false;
     $$(':scope > :not(iframe):not(picture):not(.pv-glow)', screen).forEach(el => el.remove());
   };
 
   const load = muted => {
     if (iframe) { if (!muted) { send('unMute'); send('playVideo'); } return; }
     wantPlaying = true;
+    setMuted(muted);
     const params = new URLSearchParams({
-      autoplay: 1, mute: muted ? 1 : 0, playsinline: 1, rel: 0, modestbranding: 1,
+      autoplay: 1, mute: muted ? 1 : 0, controls: 0, playsinline: 1, rel: 0, modestbranding: 1, iv_load_policy: 3,
       loop: 1, playlist: id, enablejsapi: 1, origin: location.origin, cc_load_policy: 0
     });
     iframe = document.createElement('iframe');
@@ -113,6 +123,7 @@ function initVideo() {
     if (!iframe || e.source !== iframe.contentWindow) return;
     let data; try { data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch (err) { return; }
     if (data && data.event === 'onReady') hideCaptions();
+    if (data && data.info && typeof data.info.muted === 'boolean') setMuted(data.info.muted);
     const state = data && data.info && data.info.playerState;
     if (state === 1) {
       reveal(); // playing
@@ -122,6 +133,12 @@ function initVideo() {
 
   play.disabled = false;
   play.addEventListener('click', () => load(false));
+
+  // First tap for sound restarts the video so it's heard from the beginning.
+  sound.addEventListener('click', () => {
+    if (muted) { send('unMute'); send('seekTo', [0, true]); send('playVideo'); wantPlaying = true; setMuted(false); }
+    else { send('mute'); setMuted(true); }
+  });
 
   if (reduceMotion || lowData || !('IntersectionObserver' in window)) return;
   new IntersectionObserver(([e]) => {

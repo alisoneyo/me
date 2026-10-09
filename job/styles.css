@@ -331,6 +331,13 @@ input::placeholder { color: #8C8486; }
 .pv-phone{position:relative;flex:none;height:var(--phone-h);aspect-ratio:9/16;box-sizing:border-box;padding:8px;border-radius:clamp(36px,3.4vw,48px);background:#141012;box-shadow:0 2px 4px rgba(17,17,17,.08),0 50px 90px -40px rgba(17,17,17,.55)}
 .pv-screen{position:relative;width:100%;height:100%;border-radius:clamp(29px,2.8vw,40px);overflow:hidden;background:#E9E3D9;isolation:isolate}
 .pv-screen iframe,.pv-screen video{position:absolute;inset:0;width:100%;height:100%;border:0;object-fit:cover}
+/* Sound toggle, below the phone (outside the YouTube player, which runs without controls) */
+.pv-sound{position:absolute;left:50%;top:calc(100% + 14px);transform:translateX(-50%);display:inline-flex;align-items:center;gap:8px;padding:9px 16px 9px 13px;border:0;border-radius:999px;background:#141012;color:#FAF8F3;font:inherit;font-size:14px;font-weight:500;letter-spacing:-.01em;white-space:nowrap;cursor:pointer;transition:background .25s}
+.pv-sound:hover{background:#E50050}
+.pv-sound:focus-visible{outline:2px solid #E50050;outline-offset:3px}
+.pv-sound svg{width:16px;height:16px}
+.pv-sound .pv-sound-on,.pv-sound[aria-pressed="true"] .pv-sound-off{display:none}
+.pv-sound[aria-pressed="true"] .pv-sound-on{display:block}
 .pv-cover{position:absolute;inset:0;z-index:-1;width:100%;height:100%;object-fit:cover;display:block}
 .pv-screen iframe{z-index:5;opacity:0;transition:opacity .5s ease}
 /* Size the player to cover the screen like object-fit: cover, so YouTube adds no black bars
