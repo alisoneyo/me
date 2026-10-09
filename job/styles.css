@@ -948,7 +948,7 @@ input::placeholder { color: #8C8486; }
 
 /* Handwritten note + arrow */
 .ty-note { position: relative; pointer-events: none; }
-.ty-note p { margin: 0; font-family: 'Caveat', cursive; font-weight: 700; line-height: .95; color: #FF3D82; }
+.ty-note p { margin: 0; font-family: 'Caveat', cursive; font-weight: 700; line-height: .95; color: #FF3D82; text-wrap: balance; }
 .ty-arrow { display: block; overflow: visible; }
 .ty-arrow--wide { display: none; }
 
