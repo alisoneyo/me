@@ -239,17 +239,35 @@ function initSignup() {
     script.async = true;
     document.body.appendChild(script);
   };
-  // When Serlzo reports a successful registration, swap its form for the "You're in" card (thanks.js).
+  // After registering, the form area becomes the "You're in" state (thanks.js).
+  // Route 1: Serlzo redirects back here with ?registered=1&name=…&email=…#register.
+  const params = new URLSearchParams(location.search);
+  if (params.get('registered') === '1' && window.showThanks) {
+    window.showThanks({ name: params.get('name'), email: params.get('email') });
+    history.replaceState(null, '', location.pathname);
+    document.getElementById('register').scrollIntoView({ block: 'start' });
+    return; // no need to load the form
+  }
+  // Route 2: Serlzo's embed posts a message when the form is submitted.
   const serlzoOrigin = new URL(SERLZO_EMBED).origin;
   const formId = $('[data-serlzo-form]', target)?.getAttribute('data-serlzo-form');
+  const pick = (obj, keys) => {
+    for (const src of [obj, obj.data, obj.fields, obj.values, obj.submission]) {
+      if (!src || typeof src !== 'object') continue;
+      for (const k of keys) if (typeof src[k] === 'string' && src[k]) return src[k];
+    }
+    return '';
+  };
   window.addEventListener('message', e => {
     const data = e.data || {};
     if (e.origin !== serlzoOrigin || data.type !== 'serlzo-form-submitted') return;
     if (formId && data.publicId && data.publicId !== formId) return;
-    if (target.classList.contains('thanks') || !window.mountThanks) return;
-    window.mountThanks(target);
-    target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
-    $('.thanks-title', target).focus({ preventScroll: true });
+    if (!window.showThanks) return;
+    const ty = window.showThanks({
+      name: pick(data, ['first_name', 'firstName', 'name', 'full_name', 'fullName']),
+      email: pick(data, ['email', 'email_address', 'emailAddress'])
+    });
+    if (ty) document.getElementById('register').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
   });
 
   if (!('IntersectionObserver' in window)) return load();
