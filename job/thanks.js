@@ -18,6 +18,14 @@ const THANKS = {
   const googleUrl = 'https://calendar.google.com/calendar/render?' + new URLSearchParams({
     action: 'TEMPLATE', text: THANKS.title, dates: `${THANKS.start}/${THANKS.end}`, details, location: THANKS.liveUrl
   });
+  const isoTime = t => t.replace(/^(\d{4})(\d\d)(\d\d)T(\d\d)(\d\d)(\d\d)Z$/, '$1-$2-$3T$4:$5:$6Z');
+  const outlookUrl = 'https://outlook.live.com/calendar/0/deeplink/compose?' + new URLSearchParams({
+    path: '/calendar/action/compose', rru: 'addevent', subject: THANKS.title,
+    startdt: isoTime(THANKS.start), enddt: isoTime(THANKS.end), body: details, location: THANKS.liveUrl
+  });
+  const yahooUrl = 'https://calendar.yahoo.com/?' + new URLSearchParams({
+    v: 60, title: THANKS.title, st: THANKS.start, et: THANKS.end, desc: details, in_loc: THANKS.liveUrl
+  });
   const icsEscape = s => s.replace(/[\\;,]/g, m => '\\' + m).replace(/\n/g, '\\n');
   const ics = [
     'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Alison Eyo//Webinar//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
@@ -82,15 +90,29 @@ const THANKS = {
     form.replaceChildren(); // drop the Serlzo iframe
     form.before(ty);
 
-    // Add to calendar: Apple devices get the .ics file (opens in Apple Calendar), everyone else Google Calendar.
+    // Add to calendar: pick the calendar from the email's provider when we know it,
+    // otherwise from the device (Apple devices → Apple Calendar, everyone else → Google).
     const cal = ty.querySelector('.ty-cal');
-    if (/iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent)) {
+    const domain = (mail.split('@')[1] || '').toLowerCase();
+    const isApple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+    let target;
+    if (/^(gmail|googlemail)\.com$/.test(domain)) target = 'google';
+    else if (/^(outlook|hotmail|live|msn)\./.test(domain)) target = 'outlook';
+    else if (/^(icloud|me|mac)\.com$/.test(domain)) target = 'apple';
+    else if (/^(yahoo|ymail|rocketmail)\./.test(domain)) target = 'yahoo';
+    else target = isApple ? 'apple' : 'google';
+
+    if (target === 'apple') {
       cal.href = icsUrl;
       cal.setAttribute('download', 'alison-eyo-webinar.ics');
     } else {
-      cal.href = googleUrl;
+      // For Gmail, open the event in the Google account they registered with.
+      cal.href = target === 'outlook' ? outlookUrl
+        : target === 'yahoo' ? yahooUrl
+        : googleUrl + (/^(gmail|googlemail)\.com$/.test(domain) ? '&' + new URLSearchParams({ authuser: mail }) : '');
       cal.target = '_blank';
     }
+    cal.dataset.calendar = target;
 
     // Share: native share sheet where available, otherwise copy the link
     const share = ty.querySelector('.ty-share');
