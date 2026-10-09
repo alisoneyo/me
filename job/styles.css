@@ -346,9 +346,6 @@ input::placeholder { color: #8C8486; }
 /* Placeholder (remove once a real video is in) */
 .pv-ph-bg{position:absolute;inset:-20%;z-index:-1;background:repeating-conic-gradient(#D3CABD 0 25%,#EEE8DE 0 50%) 0 0/110px 110px;filter:blur(14px)}
 .pv-ph-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(to bottom,rgba(20,16,18,.18),rgba(20,16,18,0) 22%,rgba(20,16,18,0) 60%,rgba(20,16,18,.55))}
-.pv-bars{position:absolute;top:14px;left:14px;right:14px;display:flex;gap:4px}
-.pv-bars span{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.4)}
-.pv-bars span:first-child{background:rgba(255,255,255,.95)}
 .pv-play{position:absolute;inset:0;margin:auto;width:76px;height:76px;border:0;border-radius:50%;background:#111;color:#FAF8F3;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .3s,background .3s}
 .pv-play:hover{transform:scale(1.08);background:#E50050}
 .pv-play:focus-visible{outline:2px solid #E50050;outline-offset:4px}
