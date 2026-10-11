@@ -23,3 +23,7 @@ Plain HTML, CSS and vanilla JS with no build step. The site root must be the rep
 - The font is a 29KB variable file served from this site and preloaded. A size-matched fallback stops the text jumping when it arrives.
 - The YouTube player and the Serlzo form load only when needed.
 - With data saver on or on 2G, the backgrounds are drawn once instead of animated.
+
+## Analytics
+
+Vercel Web Analytics (cookie-free) is enabled for the project; the snippet is in `index.html`. Visits show in the Vercel dashboard under the project's Analytics tab. Registrations are counted in Serlzo.
