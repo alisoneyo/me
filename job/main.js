@@ -30,6 +30,10 @@ const EASE = 'cubic-bezier(.2,.8,.2,1)';
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 const setText = (sel, text) => $$(sel).forEach(el => { el.textContent = text; });
+// Meta Pixel events (standard or custom). Does nothing if the pixel is blocked, e.g. by an ad blocker.
+const pixel = (event, params = {}, custom = false) => {
+  try { if (window.fbq) window.fbq(custom ? 'trackCustom' : 'track', event, params); } catch (e) {}
+};
 
 /* ---------- Local time ---------- */
 
@@ -155,7 +159,7 @@ function initVideo() {
   });
 
   play.disabled = false;
-  play.addEventListener('click', () => { restarted = true; load(false); });
+  play.addEventListener('click', () => { restarted = true; load(false); pixel('VideoPlay', { sound: true }, true); });
 
   // The first time sound goes on, restart so the video is heard from the beginning.
   // After that the button only mutes and unmutes.
@@ -163,6 +167,7 @@ function initVideo() {
     if (muted) {
       send('unMute');
       if (!restarted) { restarted = true; send('seekTo', [0, true]); showTime(0); }
+      pixel('VideoSoundOn', {}, true);
       send('playVideo'); wantPlaying = true; setMuted(false);
     } else { send('mute'); setMuted(true); }
   });
@@ -183,7 +188,7 @@ function initVideo() {
   if (reduceMotion || lowData || !('IntersectionObserver' in window)) return;
   new IntersectionObserver(([e]) => {
     if (e.isIntersecting) {
-      if (!iframe) load(true);
+      if (!iframe) { load(true); pixel('VideoAutoplay', {}, true); }
       else if (!wantPlaying) { wantPlaying = true; send('playVideo'); }
     } else if (iframe && wantPlaying) {
       wantPlaying = false; send('pauseVideo');
@@ -242,6 +247,12 @@ function initSignup() {
   // After registering, the form area becomes the "You're in" state (thanks.js).
   // Route 1: Serlzo redirects back here after submit (redirect URL: /job/?registered=1).
   // Serlzo appends the answers as URL parameters; accept whatever it calls them.
+  const registered = () => {
+    const details = { content_name: 'Webinar: Land a high paying role in a new industry', content_category: 'Webinar' };
+    pixel('Lead', details);
+    pixel('CompleteRegistration', { ...details, status: true });
+  };
+
   const params = new URLSearchParams(location.search);
   const clean = v => (v && !/[{}]/.test(v) ? v.trim() : ''); // ignore unfilled placeholders like {first_name}
   const findParam = (preferred, pattern) => {
@@ -253,6 +264,7 @@ function initSignup() {
   const regName = findParam(['name', 'first_name', 'full_name', 'field_full_name'], /name/i);
   if ((params.get('registered') === '1' || /@/.test(regEmail)) && window.showThanks) {
     window.showThanks({ name: regName, email: regEmail });
+    registered();
     history.replaceState(null, '', location.pathname); // don't leave their details in the address bar
     document.getElementById('register').scrollIntoView({ block: 'start' });
     return; // no need to load the form
@@ -276,6 +288,7 @@ function initSignup() {
       name: pick(data, ['first_name', 'firstName', 'name', 'full_name', 'fullName', 'field_full_name']),
       email: pick(data, ['email', 'email_address', 'emailAddress', 'field_email'])
     });
+    if (ty) registered();
     if (ty) document.getElementById('register').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
   });
 
@@ -286,6 +299,26 @@ function initSignup() {
   io.observe(target);
   // Anchor links to #register jump straight there; start loading at once.
   $$('a[href="#register"]').forEach(a => a.addEventListener('click', load, { once: true }));
+
+  // Which "Reserve my free seat" / "Save your spot" button was clicked
+  $$('a[href="#register"]').forEach(a => a.addEventListener('click', () => {
+    pixel('ReserveClick', { location: a.closest('.sticky-cta') ? 'sticky' : a.closest('.nav') ? 'nav' : 'hero' }, true);
+  }));
+
+  // Reached the registration form
+  const seen = new IntersectionObserver(es => {
+    if (es.some(e => e.isIntersecting)) { seen.disconnect(); pixel('ViewContent', { content_name: 'Registration form', content_category: 'Webinar' }); }
+  }, { threshold: .3 });
+  seen.observe(target);
+
+  // First click into the Serlzo form: the page loses focus to the form's frame
+  let formStarted = false;
+  window.addEventListener('blur', () => {
+    setTimeout(() => {
+      const frame = $('iframe', target);
+      if (!formStarted && frame && document.activeElement === frame) { formStarted = true; pixel('FormStart', {}, true); }
+    });
+  });
 }
 
 /* ---------- Sticky CTA (mobile) ---------- */

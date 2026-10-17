@@ -114,6 +114,8 @@ const THANKS = {
       cal.target = '_blank';
     }
     cal.dataset.calendar = target;
+    const pixel = (event, params) => { try { if (window.fbq) window.fbq('trackCustom', event, params); } catch (e) {} };
+    cal.addEventListener('click', () => pixel('AddToCalendar', { calendar: target }));
 
     // Share: native share sheet where available, otherwise copy the link
     const share = ty.querySelector('.ty-share');
@@ -125,6 +127,7 @@ const THANKS = {
       setTimeout(() => { label.textContent = 'Share'; }, 2200);
     };
     share.addEventListener('click', async () => {
+      pixel('Share', { method: navigator.share ? 'share sheet' : 'copy link' });
       if (navigator.share) {
         try { await navigator.share({ title: THANKS.title, text: THANKS.shareText, url: pageUrl }); }
         catch (e) { if (e.name !== 'AbortError') copyLink(); }
