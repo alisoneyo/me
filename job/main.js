@@ -6,8 +6,8 @@ const CONFIG = {
   videoUrl: 'https://youtu.be/cN0fSJf39t8'
 };
 
-const EVENT_START = new Date(Date.UTC(2026, 9, 24, 19, 0)); // 8pm BST
-const LONDON = 'Europe/London';
+const EVENT_START = new Date(Date.UTC(2026, 9, 24, 19, 0)); // 8pm WAT (also 8pm in the UK that day)
+const LAGOS = 'Africa/Lagos';
 
 const SERLZO_EMBED = 'https://xxx-v3.serlzo.com/forms/embed.js';
 
@@ -38,9 +38,8 @@ const pixel = (event, params = {}, custom = false) => {
 /* ---------- Local time ---------- */
 
 function initTimes() {
-  let tz = LONDON;
+  let tz = LAGOS;
   try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || tz; } catch (e) {}
-  const isUK = tz === LONDON;
   const parts = opts => {
     try {
       return Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: tz, ...opts }).formatToParts(EVENT_START).map(p => [p.type, p.value]));
@@ -48,18 +47,27 @@ function initTimes() {
   };
   const t = parts({ hour: 'numeric', minute: '2-digit', hour12: true });
   const d = parts({ weekday: 'short', day: 'numeric', month: 'short' });
-  if (!t || !d) return; // keep the UK defaults in the markup
-  const tzName = (parts({ timeZoneName: 'short' }) || {}).timeZoneName || '';
+  if (!t || !d) return; // keep the WAT defaults in the markup
+  let tzName = (parts({ timeZoneName: 'short' }) || {}).timeZoneName || '';
+  if (/^GMT[+-]/.test(tzName)) { // en-GB has no short name here; US English knows EDT, PDT etc.
+    try {
+      const us = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' }).formatToParts(EVENT_START).find(p => p.type === 'timeZoneName');
+      if (us && !/^GMT/.test(us.value)) tzName = us.value;
+    } catch (e) {}
+  }
+  // Browsers call West Africa Time "GMT+1"; show it as WAT
+  const isWAT = tz.startsWith('Africa/') && tzName === 'GMT+1';
+  const zone = isWAT ? 'WAT' : tzName;
   const time = t.hour + (t.minute !== '00' ? ':' + t.minute : '') + (t.dayPeriod || '').toLowerCase().replace(/[\s.]/g, '');
 
   setText('[data-nav-date]', `${d.day} ${d.month}`);
-  setText('[data-nav-time]', isUK ? `${time} UK` : `${time} ${tzName}`);
+  setText('[data-nav-time]', `${time} ${zone}`);
   setText('[data-big-date]', `${d.weekday} ${d.day} ${d.month}`);
-  setText('[data-big-time]', isUK ? `${time} UK` : time);
+  setText('[data-big-time]', isWAT ? `${time} WAT` : time);
 
   const note = $('[data-london-note]');
-  if (note && !isUK) {
-    note.textContent = `Your local time (${tzName}). That’s 8pm in London.`;
+  if (note && !isWAT) {
+    note.textContent = `Your local time (${zone}). That’s 8pm WAT in Lagos.`;
     note.hidden = false;
   }
 }

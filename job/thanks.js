@@ -1,6 +1,6 @@
 /* Alison Eyo · "You're in" state
    Replaces the Serlzo form in the register panel after someone registers.
-   The label, date heading, London-time note and footer stay as they are.
+   The label, date heading, local-time note and footer stay as they are.
    main.js calls window.showThanks() on Serlzo's submit message, or on load with
    ?registered=1&name=…&email=… (Serlzo redirect). */
 
