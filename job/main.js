@@ -8,6 +8,16 @@ const CONFIG = {
 
 const EVENT_START = new Date(Date.UTC(2026, 9, 24, 19, 0)); // 8pm WAT (also 8pm in the UK that day)
 const LAGOS = 'Africa/Lagos';
+// Short names browsers don't supply (they show "GMT+5:30" etc.). Correct for 24 Oct 2026.
+const ZONE_NAMES = {
+  'Asia/Kolkata': 'IST', 'Asia/Calcutta': 'IST', 'Europe/Dublin': 'IST',
+  'Africa/Johannesburg': 'SAST', 'Africa/Maseru': 'SAST', 'Africa/Mbabane': 'SAST',
+  'Africa/Nairobi': 'EAT', 'Africa/Addis_Ababa': 'EAT', 'Africa/Kampala': 'EAT', 'Africa/Dar_es_Salaam': 'EAT',
+  'Africa/Kigali': 'CAT', 'Africa/Lusaka': 'CAT', 'Africa/Harare': 'CAT', 'Africa/Maputo': 'CAT', 'Africa/Gaborone': 'CAT', 'Africa/Lubumbashi': 'CAT', 'Africa/Blantyre': 'CAT', 'Africa/Windhoek': 'CAT',
+  'Asia/Dubai': 'GST', 'Asia/Muscat': 'GST', 'Asia/Karachi': 'PKT', 'Asia/Singapore': 'SGT', 'Asia/Manila': 'PHT', 'Asia/Tokyo': 'JST', 'Asia/Hong_Kong': 'HKT',
+  'Australia/Sydney': 'AEDT', 'Australia/Melbourne': 'AEDT', 'Australia/Brisbane': 'AEST', 'Australia/Perth': 'AWST',
+  'America/St_Johns': 'NDT', 'America/Sao_Paulo': 'BRT'
+};
 
 const SERLZO_EMBED = 'https://xxx-v3.serlzo.com/forms/embed.js';
 
@@ -57,17 +67,24 @@ function initTimes() {
   }
   // Browsers call West Africa Time "GMT+1"; show it as WAT
   const isWAT = tz.startsWith('Africa/') && tzName === 'GMT+1';
-  const zone = isWAT ? 'WAT' : tzName;
+  const zone = isWAT ? 'WAT' : (/^GMT[+-]/.test(tzName) && ZONE_NAMES[tz]) || tzName;
   const time = t.hour + (t.minute !== '00' ? ':' + t.minute : '') + (t.dayPeriod || '').toLowerCase().replace(/[\s.]/g, '');
 
   setText('[data-nav-date]', `${d.day} ${d.month}`);
   setText('[data-nav-time]', `${time} ${zone}`);
   setText('[data-big-date]', `${d.weekday} ${d.day} ${d.month}`);
-  setText('[data-big-time]', isWAT ? `${time} WAT` : time);
+  // Long zone names (e.g. GMT+5:30) can drop to their own line on small screens
+  const big = $('[data-big-time]');
+  if (big) {
+    const z = document.createElement('span');
+    z.className = 'big-zone';
+    z.textContent = zone;
+    big.replaceChildren(time + ' ', z);
+  }
 
   const note = $('[data-london-note]');
   if (note && !isWAT) {
-    note.textContent = `Your local time (${zone}). That’s 8pm WAT in Lagos.`;
+    note.textContent = 'Shown in your local time. That’s 8pm WAT in Lagos.';
     note.hidden = false;
   }
 }

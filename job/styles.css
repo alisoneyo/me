@@ -816,6 +816,8 @@ input::placeholder { color: #8C8486; }
   text-align: center;
   white-space: nowrap;
 }
+.big-date [data-big-time] { white-space: normal; }
+.big-zone { white-space: nowrap; }
 
 /* Sign-up form: Serlzo embed (renders an iframe) */
 .signup-embed {
