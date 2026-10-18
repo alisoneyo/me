@@ -48,7 +48,7 @@ const THANKS = {
     <h3 class="ty-title"></h3>
     <p class="ty-sub"></p>
     <div class="ty-actions">
-      <a class="ty-pill ty-wa" href="${THANKS.whatsappUrl}" target="_blank" rel="noopener"><span>Get a WhatsApp reminder: <span class="ty-keep">join my channel</span></span><span class="ty-pill-icon">${waIcon}</span></a>
+      <a class="ty-pill ty-wa" href="${THANKS.whatsappUrl}" target="_blank" rel="noopener"><span>Get a WhatsApp reminder: <span class="ty-keep">join my community</span></span><span class="ty-pill-icon">${waIcon}</span></a>
       <a class="ty-pill ty-cal" href="#" rel="noopener">Add to calendar<span class="ty-pill-icon">${calIcon}</span></a>
     </div>`;
 
