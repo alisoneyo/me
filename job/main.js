@@ -100,7 +100,8 @@ function initVideo() {
   if (!url) return;
   const id = (url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/) || [])[1];
   if (!id) return;
-  const YT_ORIGIN = 'https://www.youtube-nocookie.com';
+  const YT_ORIGIN = 'https://www.youtube.com'; // the no-cookie domain gets YouTube's "confirm you're not a bot" wall more often
+  const watchUrl = `https://www.youtube.com/shorts/${id}`;
   const phone = $('.pv-phone');
   const screen = $('.pv-screen', phone);
   const play = $('.pv-play', screen);
@@ -111,6 +112,9 @@ function initVideo() {
   const timeNow = $('.pv-time-now', timeline);
   const timeTotal = $('.pv-time-total', timeline);
   let iframe = null, wantPlaying = false, muted = true, restarted = false, dragging = false, duration = 0;
+  // If YouTube won't play here (bot check, blocked autoplay, network), keep the cover up and send taps to YouTube instead.
+  let playing = false, fallback = false;
+  const checkPlaying = () => setTimeout(() => { if (!playing) fallback = true; }, 5000);
 
   const fmt = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}`;
   const showTime = t => {
@@ -160,7 +164,7 @@ function initVideo() {
     iframe.addEventListener('load', () => {
       // Ask the player to report its state so we know when the video is really playing.
       iframe.contentWindow.postMessage(JSON.stringify({ event: 'listening', id: 'pv', channel: 'widget' }), YT_ORIGIN);
-      setTimeout(reveal, 3000); // fallback, e.g. if the browser blocked autoplay: show YouTube's own play button
+      checkPlaying(); // only show the player once it's really playing
     });
     screen.appendChild(iframe);
   };
@@ -178,13 +182,20 @@ function initVideo() {
     if (info && typeof info.currentTime === 'number' && !dragging) showTime(info.currentTime);
     const state = data && data.info && data.info.playerState;
     if (state === 1) {
+      playing = true; fallback = false;
       reveal(); // playing
       if (!captionsOff) { captionsOff = true; hideCaptionsSoon(); } // again once playback starts, when the captions module loads
     }
   });
 
   play.disabled = false;
-  play.addEventListener('click', () => { restarted = true; load(false); pixel('VideoPlay', { sound: true }, true); });
+  play.addEventListener('click', () => {
+    if (fallback) { window.open(watchUrl, '_blank', 'noopener'); pixel('VideoPlay', { sound: true, on: 'youtube' }, true); return; }
+    restarted = true;
+    if (iframe) checkPlaying();
+    load(false);
+    pixel('VideoPlay', { sound: true }, true);
+  });
 
   // The first time sound goes on, restart so the video is heard from the beginning.
   // After that the button only mutes and unmutes.
