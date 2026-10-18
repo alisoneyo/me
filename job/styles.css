@@ -886,7 +886,7 @@ input::placeholder { color: #8C8486; }
 .ty-title span { color: #FF3D82; }
 .ty-sub {
   margin: 18px 0 0;
-  max-width: 34ch;
+  max-width: 44ch;
   font-size: clamp(16px, 1.3vw, 18px);
   line-height: 1.5;
   letter-spacing: -.01em;
@@ -895,32 +895,33 @@ input::placeholder { color: #8C8486; }
 }
 .ty-email { color: #FAF8F3; overflow-wrap: anywhere; }
 .ty-keep { white-space: nowrap; }
-.ty-sub-last { display: block; }
 
 .ty-actions {
-  position: relative;
-  max-width: 600px;
+  width: 100%;
+  max-width: 480px;
   margin-top: clamp(36px, 4.4vw, 56px);
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   gap: 12px;
 }
-.ty-cal, .ty-share { flex: 0 0 auto; }
 
-/* Same size as the hero's "Reserve my free seat" button (.btn-dark) */
+/* Stacked, full width of the panel: label left, icon right */
 .ty-pill {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 14px;
   box-sizing: border-box;
-  padding: 17px 18px 17px 28px;
+  width: 100%;
+  padding: 12px 12px 12px 26px;
   border: 0;
   border-radius: 999px;
   font: inherit;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 500;
-  white-space: nowrap;
+  line-height: 1.25;
+  text-align: left;
+  text-decoration: none;
   cursor: pointer;
   transition: background .25s, color .25s, transform .25s, border-color .25s;
 }
@@ -929,78 +930,40 @@ input::placeholder { color: #8C8486; }
 .ty-pill-icon {
   display: inline-flex;
   flex: none;
-  width: 28px;
-  height: 28px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   align-items: center;
   justify-content: center;
   transition: background .25s, color .25s;
 }
-.ty-pill-icon svg { width: 15px; height: 15px; }
+.ty-pill-icon svg { width: 18px; height: 18px; }
+
+/* WhatsApp reminder */
+.ty-wa { background: #E50050; color: #fff; }
+.ty-wa .ty-pill-icon { background: #fff; color: #111; }
+.ty-wa:hover { background: #FAF8F3; color: #111; }
+.ty-wa:hover .ty-pill-icon { background: #111; color: #FAF8F3; }
 
 /* Add to calendar */
-.ty-cal { background: #E50050; color: #fff; text-decoration: none; }
-.ty-cal .ty-pill-icon { background: #fff; color: #111; }
-.ty-cal:hover { background: #FAF8F3; color: #111; }
+.ty-cal { padding: 11px 11px 11px 25px; background: transparent; color: #FAF8F3; border: 1px solid rgba(250,248,243,.3); } /* 1px less padding to make up for the border */
+.ty-cal .ty-pill-icon { background: #FAF8F3; color: #111; }
+.ty-cal:hover { background: #FAF8F3; color: #111; border-color: #FAF8F3; }
+.ty-cal:hover .ty-pill-icon { background: #111; color: #FAF8F3; }
 
-/* Share */
-.ty-share { padding: 16px 17px 16px 27px; background: transparent; color: #FAF8F3; border: 1px solid rgba(250,248,243,.3); } /* 1px less padding to make up for the border */
-.ty-share .ty-pill-icon { background: #FAF8F3; color: #111; }
-.ty-share:hover { background: #FAF8F3; color: #111; border-color: #FAF8F3; }
-.ty-share:hover .ty-pill-icon { background: #111; color: #FAF8F3; }
-
-/* Handwritten note + arrow */
-.ty-note { position: relative; pointer-events: none; }
-.ty-note p { margin: 0; font-family: 'Caveat', cursive; font-weight: 700; line-height: .95; color: #FF3D82; text-wrap: balance; }
-.ty-arrow { display: block; overflow: visible; }
-.ty-arrow--wide { display: none; }
-
-@media (min-width: 1200px) {
-  .ty-note {
-    position: absolute;
-    left: calc(100% + 18px);
-    top: -58px;
-    width: 220px;
-    transform: rotate(-5deg);
-    text-align: left;
-  }
-  .ty-note p { font-size: 32px; }
-  .ty-arrow--wide { display: block; position: absolute; left: 8px; top: 66px; width: 84px; }
-  .ty-arrow--narrow { display: none; }
-}
-@media (max-width: 1199.98px) {
-  .ty-actions { flex-wrap: wrap; }
-  .ty-note {
-    flex: 1 1 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 6px;
-    transform: rotate(-3deg);
-  }
-  .ty-note p { font-size: 28px; }
-  .ty-arrow--narrow { width: 44px; margin: 0 0 4px 64px; }
-}
 @media (max-width: 639.98px) {
-  /* Full width on phones, like the hero button */
-  .ty-actions { width: 100%; flex-direction: column; flex-wrap: nowrap; }
-  .ty-actions > .ty-cal, .ty-actions > .ty-share { flex: none; width: 100%; }
-  .ty-pill { width: 100%; justify-content: space-between; }
+  .ty-pill { font-size: 16px; padding-left: 22px; }
+  .ty-cal { padding-left: 21px; }
 }
 
 /* Motion */
-.ty-title, .ty-sub, .ty-actions > .ty-cal, .ty-actions > .ty-share { animation: ty-up .8s cubic-bezier(.2,.8,.2,1) both; }
+.ty-title, .ty-sub, .ty-pill { animation: ty-up .8s cubic-bezier(.2,.8,.2,1) both; }
 .ty-sub { animation-delay: .12s; }
-.ty-actions > .ty-cal, .ty-actions > .ty-share { animation-delay: .24s; }
+.ty-wa { animation-delay: .24s; }
+.ty-cal { animation-delay: .32s; }
 @keyframes ty-up { from { opacity: 0; transform: translateY(18px); } }
-.ty-note p { animation: ty-fade .7s ease .9s both; }
-@keyframes ty-fade { from { opacity: 0; } }
-.ty-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: ty-draw .8s cubic-bezier(.6,.05,.3,1) 1.2s forwards; }
-.ty-draw-head { animation-duration: .35s; animation-delay: 1.95s; }
-@keyframes ty-draw { to { stroke-dashoffset: 0; } }
 @media (prefers-reduced-motion: reduce) {
-  .ty-title, .ty-sub, .ty-actions > .ty-cal, .ty-actions > .ty-share, .ty-note p { animation: none; }
-  .ty-draw { animation: none; stroke-dashoffset: 0; }
+  .ty-title, .ty-sub, .ty-pill { animation: none; }
 }
 
 /* ---------- Sticky CTA (mobile only) ---------- */

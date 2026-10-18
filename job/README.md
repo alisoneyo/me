@@ -29,6 +29,6 @@ Plain HTML, CSS and vanilla JS with no build step. The site root must be the rep
 - **Vercel Web Analytics:** visits, sources, countries, devices. Snippet in `index.html`; see the project's Analytics tab in Vercel.
 - **Meta Pixel** (`1090113933922355`): base code in `index.html` (with `fbq.disablePushState = true` so jumps to `#register` don't count as extra page views). Events:
   - Standard: `PageView` (load), `ViewContent` (registration form scrolled into view), `Lead` + `CompleteRegistration` (successful registration, from Serlzo's submit message or the `?registered=1` redirect)
-  - Custom: `ReserveClick` (`location`: hero / nav / sticky), `FormStart` (first click into the Serlzo form), `VideoAutoplay`, `VideoPlay`, `VideoSoundOn`, `AddToCalendar` (`calendar`), `Share` (`method`)
+  - Custom: `ReserveClick` (`location`: hero / nav / sticky), `FormStart` (first click into the Serlzo form), `VideoAutoplay`, `VideoPlay`, `VideoSoundOn`, `AddToCalendar` (`calendar`), `WhatsAppJoin`
   - Keep the Meta Pixel option in Serlzo's own form settings **off**, or leads are counted twice.
 - Registrations themselves are stored in Serlzo.
