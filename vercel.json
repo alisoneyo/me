@@ -8,13 +8,18 @@
       "permanent": false
     },
     {
+      "source": "/jobs/",
+      "destination": "/job/",
+      "permanent": false
+    },
+    {
       "source": "/jobs",
       "destination": "/job/",
       "permanent": false
     },
     {
-      "source": "/jobs/:path*",
-      "destination": "/job/:path*",
+      "source": "/jobs/:path+",
+      "destination": "/job/:path+",
       "permanent": false
     }
   ],
