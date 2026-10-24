@@ -21,6 +21,16 @@
       "source": "/jobs/:path+",
       "destination": "/job/:path+",
       "permanent": false
+    },
+    {
+      "source": "/os",
+      "destination": "https://thealisoneyo.serlzo.me/career-os-your-ai-job-application-system",
+      "permanent": false
+    },
+    {
+      "source": "/os/",
+      "destination": "https://thealisoneyo.serlzo.me/career-os-your-ai-job-application-system",
+      "permanent": false
     }
   ],
   "headers": [
