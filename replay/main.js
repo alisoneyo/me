@@ -47,16 +47,12 @@ function initOffer() {
 
   const render = claimedCount => {
     const claimed = Math.max(0, Math.min(total, claimedCount));
-    const left = total - claimed;
-    const soldOut = left <= 0;
+    const soldOut = claimed >= total;
     document.documentElement.classList.toggle('is-sold-out', soldOut);
     setText('[data-price]', soldOut ? price.was : price.now);
     setText('[data-was]', price.was);
     setText('[data-spots-headline]', soldOut ? 'Launch price has ended' : `Launch price for the first ${total} people`);
-    setText('[data-bar-long]', soldOut ? 'Launch spots are gone. Full price now.' : `Launch price for the first ${total} people · ${left} spots left`);
-    setText('[data-bar-short]', soldOut ? 'Launch spots are gone. Full price now.' : `${left} of ${total} launch spots left`);
     $$('span', ticks).forEach((t, i) => t.classList.toggle('is-claimed', i < claimed));
-    $('[data-progress]').style.width = (claimed / total * 100) + '%';
   };
 
   let lastKnown = CONFIG.claimed;
@@ -104,21 +100,29 @@ function initVideo() {
   $('.video-placeholder').replaceWith(frame);
 }
 
-/* ---------- Floating offer bar ---------- */
+/* ---------- Sticky CTA (mobile) ---------- */
 
-function initBar() {
-  const bar = $('.offer-bar');
-  const cta = $('.offer-bar-cta');
+// Like /job: pin the button to the bottom of the screen once the hero button has scrolled away,
+// and take it down once the main Career OS button is reached.
+function initStickyCta() {
+  const bar = $('.sticky-cta');
+  const link = $('a', bar);
+  const heroCta = $('.hero-ctas .btn-dark');
+  const mainCta = $('.btn-main');
+  const mobileQuery = window.matchMedia('(max-width: 639px)');
   let shown = false;
   const update = () => {
-    const s = window.scrollY > Math.min(520, window.innerHeight * .6);
-    if (s === shown) return;
-    shown = s;
-    bar.classList.toggle('is-shown', s);
-    bar.setAttribute('aria-hidden', s ? 'false' : 'true');
-    cta.tabIndex = s ? 0 : -1;
+    const show = mobileQuery.matches
+      && heroCta.getBoundingClientRect().bottom < 0
+      && mainCta.getBoundingClientRect().top > window.innerHeight;
+    if (show === shown) return;
+    shown = show;
+    bar.classList.toggle('is-visible', show);
+    bar.setAttribute('aria-hidden', String(!show));
+    link.tabIndex = show ? 0 : -1;
   };
   window.addEventListener('scroll', update, { passive: true });
+  mobileQuery.addEventListener('change', update);
   update();
 }
 
@@ -216,6 +220,6 @@ function initHeroBackground() {
 initOffer();
 initCheckout();
 initVideo();
-initBar();
+initStickyCta();
 initMotion();
 initHeroBackground();
