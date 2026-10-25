@@ -6,7 +6,7 @@ Plain HTML, CSS and vanilla JS with no build step, served at `/replay/`. Fonts (
 
 - `index.html`: markup and meta tags
 - `styles.css`: styles (mobile < 640px; the Career OS section stacks below 960px)
-- `main.js`: settings, pricing, launch spots, video, floating offer bar, reveals and the hero background
+- `main.js`: settings, pricing, launch spots, video, the sticky button on mobile, reveals and the hero background
 - `assets/`: QR code to thealisoneyo.com/os and the small avatar
 
 ## Settings (`CONFIG` at the top of `main.js`)
@@ -19,4 +19,4 @@ Plain HTML, CSS and vanilla JS with no build step, served at `/replay/`. Fonts (
 
 ## Analytics
 
-Vercel Web Analytics and the Meta Pixel (`PageView`, plus custom `CheckoutClick` with `location`: hero / offer / qr / link / bar).
+Vercel Web Analytics and the Meta Pixel (`PageView`, plus custom `CheckoutClick` with `location`: hero / offer / qr / link / sticky).
