@@ -6,19 +6,6 @@ const CONFIG = {
   videoUrl: 'https://youtu.be/cN0fSJf39t8'
 };
 
-const EVENT_START = new Date(Date.UTC(2026, 9, 24, 19, 0)); // 8pm WAT (also 8pm in the UK that day)
-const LAGOS = 'Africa/Lagos';
-// Short names browsers don't supply (they show "GMT+5:30" etc.). Correct for 24 Oct 2026.
-const ZONE_NAMES = {
-  'Asia/Kolkata': 'IST', 'Asia/Calcutta': 'IST', 'Europe/Dublin': 'IST',
-  'Africa/Johannesburg': 'SAST', 'Africa/Maseru': 'SAST', 'Africa/Mbabane': 'SAST',
-  'Africa/Nairobi': 'EAT', 'Africa/Addis_Ababa': 'EAT', 'Africa/Kampala': 'EAT', 'Africa/Dar_es_Salaam': 'EAT',
-  'Africa/Kigali': 'CAT', 'Africa/Lusaka': 'CAT', 'Africa/Harare': 'CAT', 'Africa/Maputo': 'CAT', 'Africa/Gaborone': 'CAT', 'Africa/Lubumbashi': 'CAT', 'Africa/Blantyre': 'CAT', 'Africa/Windhoek': 'CAT',
-  'Asia/Dubai': 'GST', 'Asia/Muscat': 'GST', 'Asia/Karachi': 'PKT', 'Asia/Singapore': 'SGT', 'Asia/Manila': 'PHT', 'Asia/Tokyo': 'JST', 'Asia/Hong_Kong': 'HKT',
-  'Australia/Sydney': 'AEDT', 'Australia/Melbourne': 'AEDT', 'Australia/Brisbane': 'AEST', 'Australia/Perth': 'AWST',
-  'America/St_Johns': 'NDT', 'America/Sao_Paulo': 'BRT'
-};
-
 const SERLZO_EMBED = 'https://xxx-v3.serlzo.com/forms/embed.js';
 
 // w = width of the -lg file, used for the responsive srcset
@@ -39,55 +26,10 @@ const mobileQuery = window.matchMedia('(max-width: 639.98px)');
 const EASE = 'cubic-bezier(.2,.8,.2,1)';
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-const setText = (sel, text) => $$(sel).forEach(el => { el.textContent = text; });
 // Meta Pixel events (standard or custom). Does nothing if the pixel is blocked, e.g. by an ad blocker.
 const pixel = (event, params = {}, custom = false) => {
   try { if (window.fbq) window.fbq(custom ? 'trackCustom' : 'track', event, params); } catch (e) {}
 };
-
-/* ---------- Local time ---------- */
-
-function initTimes() {
-  let tz = LAGOS;
-  try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || tz; } catch (e) {}
-  const parts = opts => {
-    try {
-      return Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: tz, ...opts }).formatToParts(EVENT_START).map(p => [p.type, p.value]));
-    } catch (e) { return null; }
-  };
-  const t = parts({ hour: 'numeric', minute: '2-digit', hour12: true });
-  const d = parts({ weekday: 'short', day: 'numeric', month: 'short' });
-  if (!t || !d) return; // keep the WAT defaults in the markup
-  let tzName = (parts({ timeZoneName: 'short' }) || {}).timeZoneName || '';
-  if (/^GMT[+-]/.test(tzName)) { // en-GB has no short name here; US English knows EDT, PDT etc.
-    try {
-      const us = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' }).formatToParts(EVENT_START).find(p => p.type === 'timeZoneName');
-      if (us && !/^GMT/.test(us.value)) tzName = us.value;
-    } catch (e) {}
-  }
-  // Browsers call West Africa Time "GMT+1"; show it as WAT
-  const isWAT = tz.startsWith('Africa/') && tzName === 'GMT+1';
-  const zone = isWAT ? 'WAT' : (/^GMT[+-]/.test(tzName) && ZONE_NAMES[tz]) || tzName;
-  const time = t.hour + (t.minute !== '00' ? ':' + t.minute : '') + (t.dayPeriod || '').toLowerCase().replace(/[\s.]/g, '');
-
-  setText('[data-nav-date]', `${d.day} ${d.month}`);
-  setText('[data-nav-time]', `${time} ${zone}`);
-  setText('[data-big-date]', `${d.weekday} ${d.day} ${d.month}`);
-  // Long zone names (e.g. GMT+5:30) can drop to their own line on small screens
-  const big = $('[data-big-time]');
-  if (big) {
-    const z = document.createElement('span');
-    z.className = 'big-zone';
-    z.textContent = zone;
-    big.replaceChildren(time + ' ', z);
-  }
-
-  const note = $('[data-london-note]');
-  if (note && !isWAT) {
-    note.textContent = 'Shown in your local time. That’s 8pm WAT in Lagos.';
-    note.hidden = false;
-  }
-}
 
 /* ---------- Phone video ---------- */
 
@@ -578,7 +520,6 @@ function initGallery() {
   });
 }
 
-initTimes();
 initVideo();
 initPhoneGlow();
 initSignup();
