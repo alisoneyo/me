@@ -14,7 +14,7 @@ Plain HTML, CSS and vanilla JS with no build step. The site root must be the rep
 ## Settings
 
 - **Video:** the intro video (a YouTube Short, set in `CONFIG.videoUrl` at the top of `main.js`) sits in a phone frame under the quote, with its cover image in `assets/video-cover-*`. It starts muted when the phone is mostly on screen, pauses when scrolled away, and starts with sound if someone presses play first. With reduced motion, data saver or 2G it waits for a press. The handwritten note ("give me 76s to tell you how") is in `index.html`.
-- **Registration form:** the Serlzo embed in the `#register` section (`data-serlzo-form="f9dd63874dc27eadd3"`). Its script URL is `SERLZO_EMBED` in `main.js`, and it loads as the visitor scrolls near the form. Edit fields and the confirmation message in Serlzo.
+- **Registration form:** the Serlzo embed in the `#register` section (`data-serlzo-form="f9dd63874dc27eadd3"`). Its script URL is `SERLZO_EMBED` in `main.js`, and it loads as the visitor scrolls near the form. Edit fields in Serlzo. After registering, people go to `/replay/` with their first name (Serlzo's redirect URL, or /job sends them there when Serlzo reports the submit).
 
 ## Built for slow connections
 
@@ -28,7 +28,7 @@ Plain HTML, CSS and vanilla JS with no build step. The site root must be the rep
 
 - **Vercel Web Analytics:** visits, sources, countries, devices. Snippet in `index.html`; see the project's Analytics tab in Vercel.
 - **Meta Pixel** (`1090113933922355`): base code in `index.html` (with `fbq.disablePushState = true` so jumps to `#register` don't count as extra page views). Events:
-  - Standard: `PageView` (load), `ViewContent` (registration form scrolled into view), `Lead` + `CompleteRegistration` (successful registration, from Serlzo's submit message or the `?registered=1` redirect)
+  - Standard: `PageView` (load), `ViewContent` (registration form scrolled into view), `Lead` + `CompleteRegistration` (successful registration; recorded on `/replay/` when they arrive from the form)
   - Custom: `ReserveClick` (`location`: hero / nav / sticky), `FormStart` (first click into the Serlzo form), `VideoAutoplay`, `VideoPlay`, `VideoSoundOn`, `AddToCalendar` (`calendar`), `WhatsAppJoin`
   - Keep the Meta Pixel option in Serlzo's own form settings **off**, or leads are counted twice.
 - Registrations themselves are stored in Serlzo.

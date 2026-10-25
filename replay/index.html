@@ -26,12 +26,29 @@
 <link rel="icon" href="/job/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/job/assets/apple-touch-icon.png">
 <link rel="preload" href="/job/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Only the letters of the TOP SECRET stamp -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&amp;text=TOPSECRT&amp;display=block">
 <link rel="stylesheet" href="/replay/styles.css">
 <script>document.documentElement.classList.add('js')</script>
+<script>
+// Coming from the /job form: Serlzo redirects here with the form answers as URL parameters.
+// Read the first name, then clean the address bar before analytics run,
+// so no personal details are recorded with the page view.
+(function () {
+  try {
+    var p = new URLSearchParams(location.search);
+    if (!location.search) return;
+    var clean = function (v) { v = (v || '').trim(); return /[{}<>]/.test(v) ? '' : v; }; // skip unfilled placeholders like {first_name}
+    var name = '';
+    ['first_name', 'firstName', 'name', 'full_name', 'fullName', 'field_full_name'].some(function (k) { return (name = clean(p.get(k))); });
+    if (!name) p.forEach(function (v, k) { if (!name && /name/i.test(k)) name = clean(v); });
+    var email = '';
+    p.forEach(function (v, k) { if (!email && /e-?mail/i.test(k)) email = clean(v); });
+    if (!name && !email && p.get('registered') !== '1') return; // not from the form
+    name = name.split(/\s+/)[0].slice(0, 40);
+    window.REPLAY_WELCOME = { name: name ? name.charAt(0).toUpperCase() + name.slice(1) : '' };
+    history.replaceState(null, '', location.pathname + location.hash);
+  } catch (e) {}
+})();
+</script>
 <!-- Vercel Web Analytics (cookie-free) -->
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js"></script>
@@ -79,6 +96,7 @@ fbq('track', 'PageView');
     </header>
 
     <div id="top" class="hero-head">
+      <p class="welcome" data-welcome hidden></p>
       <h1 class="hero-title" data-reveal>Land a high paying role in a <span class="pink">new industry</span></h1>
     </div>
 
@@ -142,23 +160,6 @@ fbq('track', 'PageView');
             <img src="/replay/assets/career-os-qr.png" alt="QR code linking to thealisoneyo.com/os" width="1000" height="1000" loading="lazy">
           </a>
           <a href="https://thealisoneyo.com/os" target="_blank" rel="noopener" class="link-pill" data-checkout="link"><svg viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></g></svg>thealisoneyo.com/os</a>
-          <svg class="stamp" aria-hidden="true" viewBox="0 0 260 150">
-            <defs>
-              <filter id="stampInk" x="-10%" y="-10%" width="120%" height="120%">
-                <feTurbulence type="fractalNoise" baseFrequency="1.7" numOctaves="2" seed="7" result="n"></feTurbulence>
-                <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.1 1.55" result="speck"></feColorMatrix>
-                <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="3" result="wob"></feTurbulence>
-                <feDisplacementMap in="SourceGraphic" in2="wob" scale="3.5" result="rough"></feDisplacementMap>
-                <feComposite in="rough" in2="speck" operator="in"></feComposite>
-              </filter>
-            </defs>
-            <g filter="url(#stampInk)" fill="#C8102E" stroke="#C8102E">
-              <rect x="6" y="6" width="248" height="138" rx="10" fill="none" stroke-width="7"></rect>
-              <rect x="18" y="18" width="224" height="114" rx="4" fill="none" stroke-width="2.5"></rect>
-              <text x="130" y="80" text-anchor="middle" stroke="none" style="font-family:'Alfa Slab One',serif;font-size:62px;letter-spacing:2px">TOP</text>
-              <text x="130" y="118" text-anchor="middle" stroke="none" style="font-family:'Alfa Slab One',serif;font-size:32px;letter-spacing:6px">SECRET</text>
-            </g>
-          </svg>
         </div>
       </div>
     </div>
