@@ -222,14 +222,15 @@ function initSignup() {
     script.async = true;
     document.body.appendChild(script);
   };
-  // After registering, the form area becomes the "You're in" state (thanks.js).
+  // After registering, people go to the replay page, welcomed by first name.
+  // The replay page records the Lead and CompleteRegistration events.
+  // Only the first name travels; never the email.
+  const toReplay = name => {
+    const first = String(name || '').trim().split(/\s+/)[0].slice(0, 40);
+    location.replace('/replay/?' + new URLSearchParams(first ? { registered: '1', name: first } : { registered: '1' }));
+  };
   // Route 1: Serlzo redirects back here after submit (redirect URL: /job/?registered=1).
   // Serlzo appends the answers as URL parameters; accept whatever it calls them.
-  const registered = () => {
-    const details = { content_name: 'Webinar: Land a high paying role in a new industry', content_category: 'Webinar' };
-    pixel('Lead', details);
-    pixel('CompleteRegistration', { ...details, status: true });
-  };
 
   const params = new URLSearchParams(location.search);
   const clean = v => (v && !/[{}]/.test(v) ? v.trim() : ''); // ignore unfilled placeholders like {first_name}
@@ -240,11 +241,8 @@ function initSignup() {
   };
   const regEmail = findParam(['email', 'field_email', 'email_address'], /e-?mail/i);
   const regName = findParam(['name', 'first_name', 'full_name', 'field_full_name'], /name/i);
-  if ((params.get('registered') === '1' || /@/.test(regEmail)) && window.showThanks) {
-    window.showThanks({ name: regName, email: regEmail });
-    registered();
-    history.replaceState(null, '', location.pathname); // don't leave their details in the address bar
-    document.getElementById('register').scrollIntoView({ block: 'start' });
+  if (params.get('registered') === '1' || /@/.test(regEmail)) {
+    toReplay(regName);
     return; // no need to load the form
   }
   // Route 2: Serlzo's embed posts a message when the form is submitted.
@@ -261,13 +259,7 @@ function initSignup() {
     const data = e.data || {};
     if (e.origin !== serlzoOrigin || data.type !== 'serlzo-form-submitted') return;
     if (formId && data.publicId && data.publicId !== formId) return;
-    if (!window.showThanks) return;
-    const ty = window.showThanks({
-      name: pick(data, ['first_name', 'firstName', 'name', 'full_name', 'fullName', 'field_full_name']),
-      email: pick(data, ['email', 'email_address', 'emailAddress', 'field_email'])
-    });
-    if (ty) registered();
-    if (ty) document.getElementById('register').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+    toReplay(pick(data, ['first_name', 'firstName', 'name', 'full_name', 'fullName', 'field_full_name']));
   });
 
   if (!('IntersectionObserver' in window)) return load();

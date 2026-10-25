@@ -169,6 +169,15 @@ a:hover { color: var(--pink); }
   align-items: center;
   text-align: center;
 }
+.welcome {
+  margin: 0 0 clamp(14px,1.6vw,22px);
+  font-size: clamp(22px,2.4vw,34px);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -.03em;
+  color: var(--pink);
+}
+.welcome[hidden] { display: none; }
 .hero-title {
   margin: 0;
   max-width: 13ch;
@@ -512,15 +521,6 @@ a:hover { color: var(--pink); }
 }
 .link-pill:hover { background: var(--pink); color: #fff; }
 .link-pill svg { width: 18px; height: 18px; }
-.stamp {
-  position: absolute;
-  top: -54px;
-  left: -40px;
-  width: clamp(150px,16vw,230px);
-  transform: rotate(-14deg);
-  pointer-events: none;
-  overflow: visible;
-}
 
 /* ---------- Footer ---------- */
 .footer {
@@ -571,7 +571,6 @@ a:hover { color: var(--pink); }
   .hero-ctas a { flex: 1 1 100%; }
   .btn-dark { width: 100%; justify-content: space-between; }
   .btn-main { align-self: stretch; }
-  .stamp { left: -4px; }
 
   .sticky-cta {
     display: block;

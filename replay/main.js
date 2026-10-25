@@ -73,6 +73,27 @@ function initOffer() {
   }
 }
 
+/* ---------- Welcome (coming from the /job form) ---------- */
+
+// The inline script in index.html reads ?registered=1&name=… and cleans the URL.
+function initWelcome() {
+  const w = window.REPLAY_WELCOME;
+  if (!w) return;
+  if (w.name) {
+    const el = $('[data-welcome]');
+    el.textContent = `Welcome, ${w.name},`;
+    el.hidden = false;
+    el.setAttribute('data-reveal', '');
+  }
+  const details = { content_name: 'Webinar: Land a high paying role in a new industry', content_category: 'Webinar' };
+  try {
+    if (window.fbq) {
+      window.fbq('track', 'Lead', details);
+      window.fbq('track', 'CompleteRegistration', { ...details, status: true });
+    }
+  } catch (e) {}
+}
+
 /* ---------- Checkout links ---------- */
 
 function initCheckout() {
@@ -217,6 +238,7 @@ function initHeroBackground() {
   requestAnimationFrame(loop);
 }
 
+initWelcome();
 initOffer();
 initCheckout();
 initVideo();
