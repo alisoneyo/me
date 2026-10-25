@@ -2,7 +2,7 @@
 
 const CONFIG = {
   // Paste the YouTube link here when the replay is ready. Until then the placeholder shows.
-  videoUrl: '',
+  videoUrl: 'https://youtube.com/live/tn0ukvNtW6Q',
   checkoutUrl: 'https://thealisoneyo.com/os',
   launchSpots: 50,
   // Last known number of launch spots sold. Shown if the live count can't be fetched.
