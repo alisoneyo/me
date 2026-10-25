@@ -6,7 +6,7 @@ Plain HTML, CSS and vanilla JS with no build step. The site root must be the rep
 
 - `index.html`: markup, SEO meta tags and Event/Person structured data
 - `styles.css`: styles (mobile < 640px, tablet 640–1099px, desktop ≥ 1100px)
-- `main.js`: local event time, scroll reveal, animated backgrounds, application-kit scaling, about gallery, lazy video and form loading
+- `main.js`: scroll reveal, animated backgrounds, application-kit scaling, about gallery, lazy video and form loading
 - `assets/`: WebP photos at three sizes (`-thumb`, `-600`, `-lg`) with JPEG fallbacks, icons, and the social preview image
 - `fonts/`: Geist (latin, variable weight) and Caveat Bold (latin subset, for the handwritten note), served from the site itself
 - `/robots.txt` and `/sitemap.xml` live at the repository root
