@@ -6,7 +6,7 @@ const CONFIG = {
   checkoutUrl: 'https://thealisoneyo.com/os',
   launchSpots: 50,
   // Last known number of launch spots sold. Shown if the live count can't be fetched.
-  claimed: 45,
+  claimed: 46,
   // Endpoint returning JSON like { "claimed": 23 }. Leave empty to use `claimed` above.
   countUrl: '',
   // One currency per visitor, picked from their time zone. Prices are shown as written here.
