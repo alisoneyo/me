@@ -4,11 +4,9 @@ const CONFIG = {
   // Paste the YouTube link here when the replay is ready. Until then the placeholder shows.
   videoUrl: 'https://youtube.com/live/tn0ukvNtW6Q',
   checkoutUrl: 'https://thealisoneyo.com/os',
-  launchSpots: 50,
-  // Last known number of launch spots sold. Shown if the live count can't be fetched.
-  claimed: 49,
-  // Endpoint returning JSON like { "claimed": 23 }. Leave empty to use `claimed` above.
-  countUrl: '',
+  // Launch price ends at the end of this day (11:59pm in Lagos). After that the page shows the full price.
+  launchEnds: '2026-11-03T23:59:59+01:00',
+  launchLabel: 'Launch price till Nov 3rd',
   // One currency per visitor, picked from their time zone. Prices are shown as written here.
   prices: {
     GBP: { now: '£19', was: '£39' },
@@ -27,7 +25,7 @@ const pixel = (event, params = {}) => {
   try { if (window.fbq) window.fbq('trackCustom', event, params); } catch (e) {}
 };
 
-/* ---------- Price and launch spots ---------- */
+/* ---------- Price and launch deadline ---------- */
 
 function currency() {
   try {
@@ -40,37 +38,11 @@ function currency() {
 
 function initOffer() {
   const price = CONFIG.prices[currency()] || CONFIG.prices.GBP;
-  const total = Math.max(1, CONFIG.launchSpots);
-  const ticks = $('[data-ticks]');
-  ticks.style.setProperty('--spots', total);
-  ticks.replaceChildren(...Array.from({ length: total }, () => document.createElement('span')));
-
-  const render = claimedCount => {
-    const claimed = Math.max(0, Math.min(total, claimedCount));
-    const soldOut = claimed >= total;
-    document.documentElement.classList.toggle('is-sold-out', soldOut);
-    setText('[data-price]', soldOut ? price.was : price.now);
-    setText('[data-was]', price.was);
-    setText('[data-spots-headline]', soldOut ? 'Launch price has ended' : `Launch price for the first ${total} people`);
-    $$('span', ticks).forEach((t, i) => t.classList.toggle('is-claimed', i < claimed));
-  };
-
-  let lastKnown = CONFIG.claimed;
-  render(lastKnown);
-
-  const url = (CONFIG.countUrl || '').trim();
-  if (url) {
-    // On failure, keep showing the last known number. Never a made-up one.
-    const pull = () => fetch(url, { cache: 'no-store' })
-      .then(r => r.json())
-      .then(j => {
-        const n = +(j.claimed ?? j.count ?? j.sold);
-        if (Number.isFinite(n) && n !== lastKnown) { lastKnown = n; render(n); }
-      })
-      .catch(() => {});
-    pull();
-    setInterval(pull, 30000);
-  }
+  const ended = Date.now() > new Date(CONFIG.launchEnds).getTime();
+  document.documentElement.classList.toggle('is-sold-out', ended);
+  setText('[data-price]', ended ? price.was : price.now);
+  setText('[data-was]', price.was);
+  setText('[data-spots-headline]', ended ? 'Launch price has ended' : CONFIG.launchLabel);
 }
 
 /* ---------- Welcome (coming from the /job form) ---------- */

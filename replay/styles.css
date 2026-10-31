@@ -437,18 +437,6 @@ a:hover { color: var(--pink); }
 
 .spots { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; }
 .spots-head { font-size: 15px; font-weight: 500; letter-spacing: -.01em; color: var(--pink); }
-.ticks {
-  display: grid;
-  grid-template-columns: repeat(var(--spots, 50), minmax(0,1fr));
-  gap: 3px;
-}
-.ticks span {
-  height: 18px;
-  border-radius: 3px;
-  background: var(--tick);
-  transition: background .6s ease;
-}
-.ticks span.is-claimed { background: var(--pink); }
 
 .btn-main {
   margin-top: clamp(28px,3.4vw,40px);
