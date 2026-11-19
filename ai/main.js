@@ -37,33 +37,28 @@ function eventLabels() {
   const d = parts({ weekday: 'long', day: 'numeric', month: 'long' });
   const t = parts({ hour: 'numeric', minute: '2-digit', hour12: true });
   let zone = parts({ timeZoneName: 'short' }).timeZoneName || '';
+  if (zone === 'UTC') zone = 'GMT';
   if (/^GMT[+-]/.test(zone)) { // en-GB has no short name here; US English knows EST, PST etc.
     const us = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' }).formatToParts(start).find(p => p.type === 'timeZoneName');
     zone = ZONE_NAMES[tz] || (us && !/^GMT/.test(us.value) ? us.value : zone);
   }
   const time = t.hour + (t.minute !== '00' ? ':' + t.minute : '') + (t.dayPeriod || '').toLowerCase().replace(/[\s.]/g, '');
-  const uk = parts({ hour: 'numeric', minute: '2-digit', hour12: true }, 'Europe/London');
-  const ukTime = uk.hour + (uk.minute !== '00' ? ':' + uk.minute : '') + (uk.dayPeriod || '').toLowerCase().replace(/[\s.]/g, '');
-  const isUK = tz === 'Europe/London';
   return {
-    long: `${d.weekday} ${d.day} ${d.month} · ${time} ${zone}`,
-    ukNote: isUK ? '' : `${ukTime} UK time`,
+    date: `${d.day} ${d.month.slice(0, 3)}`,
+    time: `${time} ${zone}`,
     short: `${d.weekday.slice(0, 3)} ${d.day} ${d.month.slice(0, 3)}`
   };
 }
 
 function initEvent() {
-  const lines = $$('[data-event-line]');
   if (!start || isNaN(start)) {
-    lines.forEach(el => { el.textContent = 'Date and time to be announced'; });
+    $$('.live-when').forEach(el => { el.replaceChildren(Object.assign(document.createElement('span'), { className: 'live-sep', textContent: '/' }), 'Date to be announced'); });
     return;
   }
   let labels;
   try { labels = eventLabels(); } catch (e) { return; } // keep the UK default in the markup
-  lines.forEach(el => {
-    el.textContent = labels.long;
-    if (labels.ukNote) { const s = document.createElement('small'); s.textContent = ` (${labels.ukNote})`; el.append(s); }
-  });
+  $$('[data-ev-date]').forEach(el => { el.textContent = labels.date; });
+  $$('[data-ev-time]').forEach(el => { el.textContent = labels.time; });
   $$('[data-event-short]').forEach(el => { el.textContent = ` · ${labels.short}`; });
   initCountdown(labels);
 }
