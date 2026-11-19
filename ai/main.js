@@ -3,12 +3,10 @@
 const CONFIG = {
   // Workshop start, for the countdown. The date shown on the page (SAT, 5 DEC / 8PM UK) is in index.html.
   // Leave empty ('') to hide the date and the countdown.
-  eventStart: '2026-12-05T20:00:00Z', // Sat 5 Dec, 8pm UK (GMT)
-  // Where the form sends { firstName, lastName, email, phone, marketingOptIn, source } as JSON.
-  // Not connected yet: until it is, submitting shows an error instead of pretending to register.
-  // Preview the states with ?preview=success or ?preview=error on the page URL.
-  registerUrl: ''
+  eventStart: '2026-12-05T20:00:00Z' // Sat 5 Dec, 8pm UK (GMT)
 };
+// Sign-ups go through the Serlzo form embedded in the dialog (index.html).
+// After submitting, Serlzo sends the visitor to /ai/?registered=1, which opens the "You're in" view.
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -62,20 +60,22 @@ function initRegistration() {
   const dialog = $('.reg');
   const formView = $('.reg-form-view', dialog);
   const done = $('.reg-done', dialog);
-  const form = $('.reg-form', dialog);
-  const submit = $('button[type="submit"]', form);
-  const formError = $('.form-error', form);
-  let source = 'hero';
   let opener = null;
 
-  const open = e => {
-    opener = e.currentTarget;
-    source = opener.dataset.register || 'hero';
+  const show = view => {
+    formView.hidden = view !== 'form';
+    done.hidden = view !== 'done';
     if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', '');
     document.documentElement.style.overflow = 'hidden';
-    const first = done.hidden ? $('input[name="firstName"]', form) : $('[data-close]', done);
-    setTimeout(() => first.focus(), 50);
-    pixel('RegisterOpen', { location: source }, true);
+    setTimeout(() => (view === 'done' ? done : $('.reg-close', dialog)).focus(), 50);
+  };
+  const open = e => {
+    opener = e.currentTarget;
+    show('form');
+    // Serlzo's script makes the form frame lazy, which can leave it blank inside a dialog. Load it now.
+    const frame = $('.reg-embed iframe', dialog);
+    if (frame && frame.loading === 'lazy') frame.loading = 'eager';
+    pixel('RegisterOpen', { location: opener.dataset.register || 'hero' }, true);
   };
   const close = () => { if (dialog.open) dialog.close(); };
   dialog.addEventListener('close', () => {
@@ -87,86 +87,17 @@ function initRegistration() {
   // Click on the backdrop closes it
   dialog.addEventListener('click', e => { if (e.target === dialog) close(); });
 
-  const fieldError = (name, show) => {
-    const input = form.elements[name];
-    input.setAttribute('aria-invalid', show ? 'true' : 'false');
-    const msg = $(`[data-error-for="${name}"]`, form);
-    msg.hidden = !show;
-    if (show) { msg.id = msg.id || `err-${name}`; input.setAttribute('aria-describedby', msg.id); }
-    else input.removeAttribute('aria-describedby');
-  };
-  const FIELDS = ['firstName', 'lastName', 'email', 'phone'];
-  const checks = {
-    firstName: v => v.length > 0,
-    lastName: v => v.length > 0,
-    email: v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v),
-    phone: v => /^\+?[\d\s().-]{7,}$/.test(v) && v.replace(/\D/g, '').length >= 7
-  };
-  const validate = () => {
-    const bad = FIELDS.filter(n => !checks[n](form.elements[n].value.trim()));
-    FIELDS.forEach(n => fieldError(n, bad.includes(n)));
-    if (bad.length) form.elements[bad[0]].focus();
-    return bad.length === 0;
-  };
-  FIELDS.forEach(n => form.elements[n].addEventListener('input', () => {
-    if (form.elements[n].getAttribute('aria-invalid') === 'true') fieldError(n, false);
-  }));
-
-  const setLoading = on => {
-    submit.classList.toggle('is-loading', on);
-    submit.disabled = on;
-    $('.btn-label', submit).textContent = on ? 'Saving your seat…' : 'Save my free seat';
-  };
-  const showError = text => { formError.textContent = text; formError.hidden = false; };
-
-  const send = async payload => {
-    const preview = new URLSearchParams(location.search).get('preview');
-    if (preview) { // design preview only
-      await new Promise(r => setTimeout(r, 1200));
-      if (preview === 'error') throw new Error('preview');
-      return;
-    }
-    if (!CONFIG.registerUrl) throw new Error('not-connected');
-    const res = await fetch(CONFIG.registerUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) throw new Error(`status ${res.status}`);
-  };
-
-  form.addEventListener('submit', async e => {
-    e.preventDefault();
-    formError.hidden = true;
-    if (!validate()) return;
-    const typed = form.elements.firstName.value.trim().slice(0, 60);
-    const firstName = typed.charAt(0).toUpperCase() + typed.slice(1);
-    const payload = {
-      firstName,
-      lastName: form.elements.lastName.value.trim().slice(0, 60),
-      email: form.elements.email.value.trim().slice(0, 120),
-      phone: form.elements.phone.value.trim().slice(0, 25),
-      marketingOptIn: form.elements.marketing.checked, // separate from the workshop emails
-      source
-    };
-    setLoading(true);
-    try {
-      await send(payload);
-      $('[data-done-title]', dialog).textContent = `You’re in, ${firstName}!`;
-      formView.hidden = true;
-      done.hidden = false;
-      done.focus();
-      const details = { content_name: 'The AI Productivity Workshop', content_category: 'Workshop' };
-      pixel('Lead', details);
-      pixel('CompleteRegistration', { ...details, status: true });
-    } catch (err) {
-      showError(err.message === 'not-connected'
-        ? 'Registration isn’t open just yet. Please check back soon.'
-        : 'Something went wrong and your seat wasn’t saved. Please try again in a moment.');
-    } finally {
-      setLoading(false);
-    }
-  });
+  // Back from Serlzo after signing up: confirm, count the lead once, and tidy the URL.
+  const params = new URLSearchParams(location.search);
+  if (params.get('registered') === '1') {
+    show('done');
+    const details = { content_name: 'The AI Productivity Workshop', content_category: 'Workshop' };
+    pixel('Lead', details);
+    pixel('CompleteRegistration', { ...details, status: true });
+    params.delete('registered');
+    const qs = params.toString();
+    history.replaceState(null, '', location.pathname + (qs ? `?${qs}` : '') + location.hash);
+  }
 }
 
 /* ---------- Sticky CTA (mobile) ---------- */
