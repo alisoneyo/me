@@ -153,31 +153,6 @@ button { font: inherit; }
     radial-gradient(ellipse 50% 45% at 82% 12%, rgba(214,206,194,.55), rgba(214,206,194,0) 70%),
     radial-gradient(ellipse 40% 40% at 10% 30%, rgba(238,233,225,.9), rgba(238,233,225,0) 70%);
 }
-/* Soft pink glows that drift slowly, as on Lara's page */
-.hero-glow { -webkit-mask-image: linear-gradient(to bottom,#000 55%,transparent 96%); mask-image: linear-gradient(to bottom,#000 55%,transparent 96%); }
-.hero-glow::before, .hero-glow::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(40px);
-  animation: glow-drift 16s ease-in-out infinite alternate;
-}
-.hero-glow::before {
-  width: min(56vw,760px); aspect-ratio: 1;
-  left: -14%; top: -22%;
-  background: radial-gradient(circle, rgba(255,61,130,.22) 0%, rgba(255,61,130,0) 62%);
-}
-.hero-glow::after {
-  width: min(48vw,660px); aspect-ratio: 1;
-  right: -8%; bottom: 4%;
-  background: radial-gradient(circle, rgba(229,0,80,.18) 0%, rgba(229,0,80,0) 62%);
-  animation-duration: 20s;
-  animation-direction: alternate-reverse;
-}
-@keyframes glow-drift {
-  from { transform: translate3d(0,0,0) scale(1); }
-  to { transform: translate3d(4%,6%,0) scale(1.12); }
-}
 /* The window-blind shadows from /job, held still */
 .hero-blinds {
   position: absolute;
@@ -295,36 +270,6 @@ button { font: inherit; }
   align-items: center;
   gap: 3px;
 }
-/* Liquid fill on hover: a slowly turning blob rises into the box */
-.countdown div { position: relative; overflow: hidden; isolation: isolate; cursor: default; transition: transform .4s var(--ease); }
-.countdown div::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 200%;
-  width: 260%;
-  aspect-ratio: 1;
-  margin-left: -130%;
-  border-radius: 42%;
-  background: var(--pink);
-  z-index: -1;
-  animation: cd-swirl 7s linear infinite;
-  transition: top .9s cubic-bezier(.3,.7,.2,1);
-}
-.countdown div:nth-child(2)::before { animation-duration: 8s; animation-delay: -2s; }
-.countdown div:nth-child(3)::before { animation-duration: 6.5s; animation-delay: -4s; }
-.countdown div:nth-child(4)::before { animation-duration: 7.5s; animation-delay: -1s; }
-@keyframes cd-swirl { to { transform: rotate(360deg); } }
-.countdown span, .countdown small { transition: color .45s .1s; }
-@media (hover: hover) {
-  .countdown div:hover { transform: translateY(-3px); }
-  .countdown div:hover::before { top: 16%; }
-  .countdown div:hover span { color: #fff; }
-  .countdown div:hover small { color: rgba(255,255,255,.82); }
-}
-.countdown div:active::before { top: 16%; }
-.countdown div:active span { color: #fff; }
-.countdown div:active small { color: rgba(255,255,255,.82); }
 .countdown span {
   font-size: 22px;
   font-weight: 500;
@@ -657,4 +602,16 @@ button { font: inherit; }
   .js [data-reveal] { opacity: 1; transform: none; }
   .js .draw { animation: none; stroke-dashoffset: 0; }
   *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
+}
+
+/* Gradient on the pink words, as on Lara's page */
+.hero-title .pink {
+  background: linear-gradient(90deg, #D4004A 0%, #EE1F72 50%, #FF5E9F 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  filter: drop-shadow(0 6px 22px rgba(240,40,122,.28));
 }
