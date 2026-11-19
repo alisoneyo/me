@@ -469,52 +469,23 @@ button { font: inherit; }
   letter-spacing: -.05em;
 }
 .reg-sub { margin: 10px 0 26px; font-size: 15px; line-height: 1.5; color: var(--muted); }
-.reg-form { display: flex; flex-direction: column; gap: 16px; }
-.field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
-.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.field input::placeholder { color: #B3AAAD; }
-.field > span { font-size: 14px; font-weight: 500; }
-.field input {
-  font: inherit;
-  font-size: 16px; /* 16px stops iOS zooming in */
-  padding: 14px 16px;
-  border: 1px solid #D9D1CB;
-  border-radius: 14px;
-  background: #fff;
-  color: var(--ink);
-  outline: none;
-  transition: border-color .2s, box-shadow .2s;
-}
-.field input:focus { border-color: var(--ink); box-shadow: 0 0 0 3px rgba(17,17,17,.08); }
-.field input[aria-invalid="true"] { border-color: var(--pink); }
-.field-error { font-size: 13px; color: var(--pink); }
-.consent-note { margin: 2px 0 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
-.optin { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.45; cursor: pointer; }
-.optin input { flex: none; width: 18px; height: 18px; margin: 1px 0 0; accent-color: var(--ink); }
-.optin em { font-style: normal; color: var(--muted); }
-.form-error {
-  margin: 0;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: #FCE8EF;
-  color: #A3003A;
-  font-size: 14px;
-  line-height: 1.45;
+.reg-embed { margin-top: 36px; min-height: 420px; }
+.reg-embed iframe { display: block; width: 100%; border: 0; border-radius: 16px; }
+.reg-fallback { margin: 14px 0 0; font-size: 13px; text-align: center; color: var(--muted); }
+.reg-fallback a { color: inherit; }
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 .btn-block { width: 100%; justify-content: center; margin-top: 4px; }
 .btn-block:hover { transform: none; }
-.spinner {
-  display: none;
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(250,248,243,.35);
-  border-top-color: var(--bg);
-  border-radius: 50%;
-  animation: spin .8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-.is-loading .spinner { display: inline-block; }
-.is-loading .btn-label { opacity: .7; }
 .reg-done { text-align: center; padding-top: 12px; outline: none; }
 .done-check {
   width: 64px;

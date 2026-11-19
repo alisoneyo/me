@@ -48,6 +48,7 @@ fbq('track', 'PageView');
 </script>
 <!-- End Meta Pixel Code -->
 <script src="/ai/main.js" defer></script>
+<script async src="https://xxx-v3.serlzo.com/forms/embed.js"></script>
 </head>
 <body>
 <div class="page">
@@ -156,42 +157,10 @@ fbq('track', 'PageView');
     <button type="button" class="reg-close" data-close aria-label="Close">×</button>
 
     <div class="reg-form-view">
-      <h2 id="reg-title" class="reg-title">Save your free seat</h2>
-      <p class="reg-sub">The AI Productivity Workshop with Alison Eyo.</p>
-
-      <form class="reg-form" novalidate>
-        <div class="field-row">
-          <label class="field">
-            <span>First name</span>
-            <input type="text" name="firstName" autocomplete="given-name" required maxlength="60">
-            <small class="field-error" data-error-for="firstName" hidden>Please enter your first name.</small>
-          </label>
-          <label class="field">
-            <span>Last name</span>
-            <input type="text" name="lastName" autocomplete="family-name" required maxlength="60">
-            <small class="field-error" data-error-for="lastName" hidden>Please enter your last name.</small>
-          </label>
-        </div>
-        <label class="field">
-          <span>Email address</span>
-          <input type="email" name="email" autocomplete="email" inputmode="email" required maxlength="120">
-          <small class="field-error" data-error-for="email" hidden>Please enter a valid email address.</small>
-        </label>
-        <label class="field">
-          <span>Phone number</span>
-          <input type="tel" name="phone" autocomplete="tel" inputmode="tel" required maxlength="25" placeholder="+44 7700 900123">
-          <small class="field-error" data-error-for="phone" hidden>Please enter your phone number, with your country code.</small>
-        </label>
-
-        <p class="consent-note">By registering, you agree to receive emails about this workshop, such as your joining link and reminders.</p>
-        <label class="optin">
-          <input type="checkbox" name="marketing" value="yes">
-          <span>Also send me occasional emails about new workshops and resources. <em>Optional.</em></span>
-        </label>
-
-        <p class="form-error" role="alert" hidden></p>
-        <button type="submit" class="btn-dark btn-block"><span class="btn-label">Save my free seat</span><span class="spinner" aria-hidden="true"></span></button>
-      </form>
+      <h2 id="reg-title" class="visually-hidden">Save your free seat</h2>
+      <!-- Serlzo form "Save your free seat" (list: AI for productivity). After submitting, Serlzo sends people to /ai/?registered=1. -->
+      <div class="reg-embed" data-serlzo-form="44752deae6d3391e6e" data-serlzo-title="Save your free seat" data-serlzo-min-height="420px"></div>
+      <p class="reg-fallback">Form not loading? <a href="https://forms.serlzo.site/44752deae6d3391e6e" target="_blank" rel="noopener">Open it in a new tab</a>.</p>
     </div>
 
     <div class="reg-done" hidden tabindex="-1">
