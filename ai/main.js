@@ -6,7 +6,7 @@ const CONFIG = {
   eventStart: '2026-12-05T20:00:00Z' // Sat 5 Dec, 8pm UK (GMT)
 };
 // Sign-ups go through the Serlzo form embedded in the dialog (index.html).
-// After submitting, Serlzo sends the visitor to /ai/?registered=1, which opens the "You're in" view.
+// After submitting, the pop-up closes and a "You're in" card (thanks.js) shows in the closing section.
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -58,20 +58,15 @@ function initCountdown() {
 
 function initRegistration() {
   const dialog = $('.reg');
-  const formView = $('.reg-form-view', dialog);
-  const done = $('.reg-done', dialog);
   let opener = null;
+  let registered = false;
 
-  const show = view => {
-    formView.hidden = view !== 'form';
-    done.hidden = view !== 'done';
-    if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', '');
-    document.documentElement.style.overflow = 'hidden';
-    setTimeout(() => (view === 'done' ? done : $('.reg-close', dialog)).focus(), 50);
-  };
   const open = e => {
     opener = e.currentTarget;
-    show('form');
+    if (registered) { scrollToThanks(); return; } // already signed up: show the "You're in" card again
+    if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', '');
+    document.documentElement.style.overflow = 'hidden';
+    setTimeout(() => $('.reg-close', dialog).focus(), 50);
     // Serlzo's script makes the form frame lazy, which can leave it blank inside a dialog. Load it now.
     const frame = $('.reg-embed iframe', dialog);
     if (frame && frame.loading === 'lazy') frame.loading = 'eager';
@@ -80,15 +75,43 @@ function initRegistration() {
   const close = () => { if (dialog.open) dialog.close(); };
   dialog.addEventListener('close', () => {
     document.documentElement.style.overflow = '';
-    if (opener) opener.focus();
+    if (opener && !registered) opener.focus();
   });
   $$('[data-register]').forEach(b => b.addEventListener('click', open));
   $$('[data-close]', dialog).forEach(b => b.addEventListener('click', close));
   // Click on the backdrop closes it
   dialog.addEventListener('click', e => { if (e.target === dialog) close(); });
 
-  // Back from Serlzo after signing up: go to the thank-you page, greeted by first name.
-  // Only the first name travels; the thank-you page counts the lead once.
+  const scrollToThanks = () => {
+    const ty = $('.final .ty');
+    if (ty) ty.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+  };
+
+  // Signed up: close the pop-up and show the "You're in" card in the closing section (as on /job)
+  const success = ({ name = '', email = '' } = {}) => {
+    // Serlzo's redirect can open inside the form frame: hand over to the full page instead
+    if (window.top !== window) {
+      const qs = new URLSearchParams({ registered: '1' });
+      const first = String(name).trim().split(/\s+/)[0].slice(0, 40);
+      if (first) qs.set('name', first);
+      try { window.top.location.replace('/ai/?' + qs); return; } catch (e) { /* fall through */ }
+    }
+    if (registered) return;
+    registered = true;
+    close();
+    if (window.showThanks) window.showThanks({ name, email });
+    let counted = false;
+    try { counted = sessionStorage.getItem('ai-registered') === '1'; sessionStorage.setItem('ai-registered', '1'); } catch (e) { /* ignore */ }
+    if (!counted) {
+      const details = { content_name: 'The AI Productivity Workshop', content_category: 'Workshop' };
+      pixel('Lead', details);
+      pixel('CompleteRegistration', { ...details, status: true });
+    }
+    setTimeout(scrollToThanks, 120);
+  };
+
+  // Route 1: Serlzo redirects to /ai/?registered=1 with the answers as URL parameters.
+  // Read the name and email, then clear them from the address bar.
   const params = new URLSearchParams(location.search);
   const clean = v => (v && !/[{}<>]/.test(v) ? v.trim() : '');
   const findParam = (preferred, pattern) => {
@@ -96,19 +119,16 @@ function initRegistration() {
     for (const [k, v] of params) if (pattern.test(k) && !/last|sur/i.test(k) && clean(v)) return clean(v);
     return '';
   };
-  const toThankYou = name => {
-    const first = String(name || '').trim().split(/\s+/)[0].slice(0, 40);
-    const url = '/ai/thank-you/?' + new URLSearchParams(first ? { registered: '1', name: first } : { registered: '1' });
-    // If Serlzo's redirect opened inside the form frame, move the whole page instead
-    try { (window.top !== window ? window.top : window).location.replace(url); } catch (e) { location.replace(url); }
-  };
-  const email = findParam(['email', 'field_email', 'email_address'], /e-?mail/i);
-  if (params.get('registered') === '1' || /@/.test(email)) {
-    toThankYou(findParam(['first_name', 'firstName', 'name', 'full_name', 'fullName', 'field_full_name'], /name/i));
-    return;
+  const regEmail = findParam(['email', 'field_email', 'email_address'], /e-?mail/i);
+  if (params.get('registered') === '1' || /@/.test(regEmail)) {
+    const regName = findParam(['first_name', 'firstName', 'name', 'full_name', 'fullName', 'field_full_name'], /name/i);
+    history.replaceState(null, '', location.pathname + location.hash);
+    // wait for the page to lay out before scrolling to the card
+    if (document.readyState === 'complete') success({ name: regName, email: regEmail });
+    else window.addEventListener('load', () => success({ name: regName, email: regEmail }), { once: true });
   }
 
-  // Serlzo's embed also posts a message when the form is submitted (as on /job)
+  // Route 2: Serlzo's embed posts a message when the form is submitted (as on /job)
   const formId = $('.reg-embed', dialog)?.getAttribute('data-serlzo-form');
   const pick = (obj, keys) => {
     for (const src of [obj, obj.data, obj.fields, obj.values, obj.answers, obj.submission, obj.submission && obj.submission.answers]) {
@@ -123,7 +143,10 @@ function initRegistration() {
     try { host = new URL(e.origin).hostname; } catch (err) { return; }
     if (!/(^|\.)serlzo\.(com|site)$/.test(host) || data.type !== 'serlzo-form-submitted') return;
     if (formId && data.publicId && data.publicId !== formId) return;
-    toThankYou(pick(data, ['first_name', 'firstName', 'name', 'full_name', 'fullName', 'field_full_name']));
+    success({
+      name: pick(data, ['first_name', 'firstName', 'name', 'full_name', 'fullName', 'field_full_name']),
+      email: pick(data, ['email', 'field_email', 'email_address'])
+    });
   });
 }
 
