@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Alison Eyo//AI Workshop//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:ai-workshop-20261205@thealisoneyo.com
+DTSTAMP:20261119T120000Z
+DTSTART:20261205T200000Z
+DTEND:20261205T210000Z
+SUMMARY:How to Use AI to Work Smarter & Get More Done
+DESCRIPTION:Free live workshop with Alison Eyo\, streamed live on YouTube. The link will be emailed to you before we go live.\n\nhttps://www.thealisoneyo.com/ai/
+LOCATION:YouTube Live
+URL:https://www.thealisoneyo.com/ai/
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:The AI workshop starts in 30 minutes
+END:VALARM
+END:VEVENT
+END:VCALENDAR
