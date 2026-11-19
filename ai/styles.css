@@ -263,6 +263,36 @@ button { font: inherit; }
   align-items: center;
   gap: 4px;
 }
+/* Liquid fill on hover: a slowly turning blob rises into the box */
+.countdown div { position: relative; overflow: hidden; isolation: isolate; cursor: default; transition: transform .4s var(--ease); }
+.countdown div::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 112%;
+  width: 260%;
+  aspect-ratio: 1;
+  margin-left: -130%;
+  border-radius: 42%;
+  background: var(--pink);
+  z-index: -1;
+  animation: cd-swirl 7s linear infinite;
+  transition: top .9s cubic-bezier(.3,.7,.2,1);
+}
+.countdown div:nth-child(2)::before { animation-duration: 8s; animation-delay: -2s; }
+.countdown div:nth-child(3)::before { animation-duration: 6.5s; animation-delay: -4s; }
+.countdown div:nth-child(4)::before { animation-duration: 7.5s; animation-delay: -1s; }
+@keyframes cd-swirl { to { transform: rotate(360deg); } }
+.countdown span, .countdown small { transition: color .45s .1s; }
+@media (hover: hover) {
+  .countdown div:hover { transform: translateY(-3px); }
+  .countdown div:hover::before { top: 16%; }
+  .countdown div:hover span { color: #fff; }
+  .countdown div:hover small { color: rgba(255,255,255,.82); }
+}
+.countdown div:active::before { top: 16%; }
+.countdown div:active span { color: #fff; }
+.countdown div:active small { color: rgba(255,255,255,.82); }
 .countdown span {
   font-size: clamp(30px,3vw,40px);
   font-weight: 500;
@@ -277,7 +307,6 @@ button { font: inherit; }
   text-transform: uppercase;
   color: var(--cd-label,var(--muted));
 }
-.hero-note { margin: 16px 0 0; font-size: 13px; color: var(--muted); }
 
 /* ---------- What I'll show you ---------- */
 .learn {
@@ -467,7 +496,9 @@ button { font: inherit; }
 }
 .reg-sub { margin: 10px 0 26px; font-size: 15px; line-height: 1.5; color: var(--muted); }
 .reg-form { display: flex; flex-direction: column; gap: 16px; }
-.field { display: flex; flex-direction: column; gap: 7px; }
+.field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.field input::placeholder { color: #B3AAAD; }
 .field > span { font-size: 14px; font-weight: 500; }
 .field input {
   font: inherit;
