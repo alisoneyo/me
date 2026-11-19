@@ -204,14 +204,17 @@ button { font: inherit; }
 .hero-title {
   margin: 0;
   font-weight: 500;
-  font-size: clamp(50px,8.6vw,140px);
-  line-height: .9;
-  letter-spacing: -.06em;
+  max-width: 15ch;
+  font-size: clamp(44px,6.6vw,104px);
+  line-height: .94;
+  letter-spacing: -.055em;
+  text-wrap: balance;
 }
 .hero-copy {
-  max-width: 600px;
-  margin: clamp(28px,3vw,40px) 0 0;
+  max-width: 640px;
+  margin: clamp(24px,2.6vw,34px) 0 0;
   font-size: clamp(17px,1.45vw,21px);
+  font-style: italic;
   line-height: 1.45;
   letter-spacing: -.015em;
   text-wrap: pretty;
@@ -522,7 +525,7 @@ button { font: inherit; }
   .nav-cta { display: none; }
   .hero-body { padding-top: 56px; padding-bottom: 72px; }
   .hero-eyebrow { font-size: 12px; }
-  .hero-title { font-size: clamp(40px,12.2vw,58px); }
+  .hero-title { font-size: clamp(36px,10.4vw,50px); }
   .countdown { gap: 6px; width: 100%; }
   .countdown div { flex: 1; min-width: 0; border-radius: 14px; padding: 12px 4px 9px; }
   .countdown span { font-size: 28px; }
