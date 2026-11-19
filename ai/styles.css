@@ -355,6 +355,7 @@ button { font: inherit; }
   color: var(--ink) !important;
   margin-bottom: 22px !important;
 }
+.host-copy .host-close { font-weight: 600; color: var(--ink); }
 .host-copy .btn-dark { margin-top: 20px; }
 
 /* ---------- Final register panel (same as /job) ---------- */
