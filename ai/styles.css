@@ -174,10 +174,10 @@ button { font: inherit; }
   gap: 12px;
 }
 .nav-logo { display: flex; color: var(--ink); justify-self: start; }
-.nav .nav-live { margin: 0; flex-wrap: nowrap; gap: 0 clamp(8px,1.4vw,14px); white-space: nowrap; }
+.nav .nav-live { margin: 0; flex-wrap: nowrap; gap: 0 clamp(8px,1.4vw,18px); white-space: nowrap; font-size: clamp(11px,1vw,13px); }
 .nav-cta { justify-self: end; }
-/* In the hero the label stands alone; the date is in the top bar (phones: below) */
-.hero-live .live-when { display: none; }
+/* The label and date live in the top bar; on phones they show above the headline instead */
+.hero-body .hero-live { display: none; }
 .nav-logo svg { width: 38px; height: 44px; }
 .nav-cta {
   border: 0;
@@ -534,7 +534,7 @@ button { font: inherit; }
   .nav { padding: 20px var(--gutter) 0; }
   .nav { display: flex; }
   .nav-cta, .nav-live { display: none; }
-  .hero-live .live-when { display: flex; }
+  .hero-body .hero-live { display: flex; }
   .hero-body { padding-top: 56px; padding-bottom: 72px; }
   .hero-title { font-size: clamp(32px,9vw,42px); }
   .live-when .live-sep:first-child { display: none; } /* the date drops to its own line */
