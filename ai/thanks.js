@@ -24,7 +24,7 @@ const THANKS = {
   const template = `
     <h2 class="ty-title"></h2>
     <p class="ty-sub"></p>
-    <p class="live live-dark final-when"><span class="live-label"><span class="eyebrow-dot eyebrow-dot-green"></span>Sat, 5 Dec</span><span class="live-sep">/</span><span>8pm UK</span></p>
+    <p class="live live-dark final-when"><span class="live-label"><span class="eyebrow-dot"></span>Sat, 5 Dec</span><span class="live-sep">/</span><span>8pm UK</span><span class="live-sep">/</span><span>YouTube Live</span></p>
     <div class="ty-actions">
       <div class="ty-cal">
         <button class="ty-pill ty-cal-toggle" type="button" aria-expanded="false" aria-controls="ty-cal-options">Add to calendar<span class="ty-pill-icon">${calIcon}</span></button>
@@ -33,10 +33,8 @@ const THANKS = {
           <a href="${icsUrl}" download="ai-workshop.ics" data-cal="ics">Apple / Outlook</a>
         </div>
       </div>
-      <button class="ty-pill ty-share" type="button"><span class="ty-share-label">Share</span><span class="ty-pill-icon">${linkIcon}</span></button>
+      <button class="ty-pill ty-share" type="button"><span class="ty-share-label">Share with a friend</span><span class="ty-pill-icon">${linkIcon}</span></button>
       <div class="ty-note" aria-hidden="true">
-        <svg class="ty-arrow ty-arrow--wide" viewBox="0 0 120 120"><g fill="none" stroke="#FF3D82" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path class="ty-draw" pathLength="1" d="M88 6 C 84 44, 62 82, 14 104"/><path class="ty-draw ty-draw-head" pathLength="1" d="M34 100 L 14 104 L 24 86"/></g></svg>
-        <svg class="ty-arrow ty-arrow--narrow" viewBox="0 0 70 56"><g fill="none" stroke="#FF3D82" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path class="ty-draw" pathLength="1" d="M48 52 C 52 34, 42 16, 20 8"/><path class="ty-draw ty-draw-head" pathLength="1" d="M33 4 L 20 8 L 28 19"/></g></svg>
         <p>send to someone who needs this</p>
       </div>
     </div>`;
@@ -101,7 +99,7 @@ const THANKS = {
       try { await navigator.clipboard.writeText(pageUrl); }
       catch (e) { window.prompt('Copy this link:', pageUrl); return; }
       label.textContent = 'Link copied ✓';
-      setTimeout(() => { label.textContent = 'Share'; }, 2200);
+      setTimeout(() => { label.textContent = 'Share with a friend'; }, 2200);
     };
     share.addEventListener('click', async () => {
       pixel('ShareWorkshop', {});
