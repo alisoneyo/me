@@ -176,7 +176,7 @@ function initRegistration() {
 function initStickyCta() {
   const bar = $('.sticky-cta');
   const btn = $('.btn-dark', bar);
-  const heroBtn = $('.hero-body > .btn-dark');
+  const heroBtn = $('[data-register="hero"]');
   const final = $('.final');
   const mobile = window.matchMedia('(max-width: 639px)');
   let shown = false;
