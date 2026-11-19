@@ -238,7 +238,7 @@ button { font: inherit; }
   line-height: .94;
   letter-spacing: -.055em;
   flex: 1 1 560px;
-  max-width: 11ch;
+  max-width: 13ch;
 }
 .hero-copy {
   margin: 0;
@@ -273,7 +273,7 @@ button { font: inherit; }
   content: "";
   position: absolute;
   left: 50%;
-  top: 112%;
+  top: 200%;
   width: 260%;
   aspect-ratio: 1;
   margin-left: -130%;
