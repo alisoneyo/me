@@ -108,9 +108,7 @@ button { font: inherit; }
   white-space: nowrap;
   transition: background .25s, color .25s, transform .25s;
 }
-/* Pink glow under the button, as on Lara's page */
-.btn-dark { box-shadow: 0 18px 38px -16px rgba(229,0,80,.6), 0 4px 14px -6px rgba(229,0,80,.25), inset 0 1px 0 rgba(255,255,255,.14); }
-.btn-dark:hover { background: var(--pink); color: #fff; transform: translateY(-2px); box-shadow: 0 22px 46px -14px rgba(229,0,80,.75), 0 6px 18px -6px rgba(229,0,80,.35), inset 0 1px 0 rgba(255,255,255,.2); }
+.btn-dark:hover { background: var(--pink); color: #fff; transform: translateY(-2px); }
 .btn-dark:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }
 .btn-dark-icon {
   display: inline-flex;
@@ -262,8 +260,7 @@ button { font: inherit; }
   padding: 10px 6px 8px;
   box-sizing: border-box;
   border-radius: 14px;
-  background: var(--cd-bg,linear-gradient(180deg,#fff 0%,#FFF3F7 100%));
-  box-shadow: 0 12px 26px -14px rgba(229,0,80,.45), 0 2px 6px -2px rgba(229,0,80,.12), inset 0 1px 0 #fff, inset 0 -1px 0 rgba(229,0,80,.08);
+  background: var(--cd-bg,#fff);
   color: var(--cd-ink,var(--ink));
   display: flex;
   flex-direction: column;
@@ -604,7 +601,7 @@ button { font: inherit; }
   *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
 }
 
-/* Gradient on the pink words, as on Lara's page */
+/* Gradient on the pink words */
 .hero-title .pink {
   background: linear-gradient(90deg, #D4004A 0%, #EE1F72 50%, #FF5E9F 100%);
   -webkit-background-clip: text;
@@ -613,5 +610,4 @@ button { font: inherit; }
   color: transparent;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
-  filter: drop-shadow(0 6px 22px rgba(240,40,122,.28));
 }
