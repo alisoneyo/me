@@ -1,8 +1,8 @@
 /* Alison Eyo · The AI Productivity Workshop */
 
 const CONFIG = {
-  // Workshop start. Shown in each visitor's local time, with the countdown counting down to it.
-  // Leave empty ('') to show "Date and time to be announced" and hide the countdown.
+  // Workshop start, for the countdown. The date shown on the page (SAT, 5 DEC / 8PM UK) is in index.html.
+  // Leave empty ('') to hide the date and the countdown.
   eventStart: '2026-12-05T20:00:00Z', // Sat 5 Dec, 8pm UK (GMT)
   // Where the form sends { firstName, email, marketingOptIn, source } as JSON.
   // Not connected yet: until it is, submitting shows an error instead of pretending to register.
@@ -20,52 +20,20 @@ const pixel = (event, params = {}, custom = false) => {
   try { if (window.fbq) window.fbq(custom ? 'trackCustom' : 'track', event, params); } catch (e) {}
 };
 
-/* ---------- Date in the visitor's local time ---------- */
+/* ---------- Date ---------- */
 
-// Short zone names browsers don't supply (they show "GMT+1" etc.)
-const ZONE_NAMES = {
-  'Africa/Lagos': 'WAT', 'Africa/Nairobi': 'EAT', 'Africa/Johannesburg': 'SAST', 'Africa/Accra': 'GMT',
-  'Asia/Dubai': 'GST', 'Asia/Kolkata': 'IST', 'Asia/Calcutta': 'IST', 'Asia/Singapore': 'SGT',
-  'Australia/Sydney': 'AEDT', 'Australia/Melbourne': 'AEDT', 'Europe/Dublin': 'GMT'
-};
-
-function eventLabels() {
-  let tz = 'Europe/London';
-  try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || tz; } catch (e) {}
-  const parts = (opts, zone = tz) => Object.fromEntries(
-    new Intl.DateTimeFormat('en-GB', { timeZone: zone, ...opts }).formatToParts(start).map(p => [p.type, p.value]));
-  const d = parts({ weekday: 'long', day: 'numeric', month: 'long' });
-  const t = parts({ hour: 'numeric', minute: '2-digit', hour12: true });
-  let zone = parts({ timeZoneName: 'short' }).timeZoneName || '';
-  if (zone === 'UTC') zone = 'GMT';
-  if (/^GMT[+-]/.test(zone)) { // en-GB has no short name here; US English knows EST, PST etc.
-    const us = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' }).formatToParts(start).find(p => p.type === 'timeZoneName');
-    zone = ZONE_NAMES[tz] || (us && !/^GMT/.test(us.value) ? us.value : zone);
-  }
-  const time = t.hour + (t.minute !== '00' ? ':' + t.minute : '') + (t.dayPeriod || '').toLowerCase().replace(/[\s.]/g, '');
-  return {
-    date: `${d.day} ${d.month.slice(0, 3)}`,
-    time: `${time} ${zone}`,
-    short: `${d.weekday.slice(0, 3)} ${d.day} ${d.month.slice(0, 3)}`
-  };
-}
-
+// The date is fixed in the markup (SAT, 5 DEC / 8PM UK). This only starts the countdown.
 function initEvent() {
   if (!start || isNaN(start)) {
-    $$('.live-when').forEach(el => { el.replaceChildren(Object.assign(document.createElement('span'), { className: 'live-sep', textContent: '/' }), 'Date to be announced'); });
+    $$('.live-when, .nav-live').forEach(el => { el.hidden = true; });
     return;
   }
-  let labels;
-  try { labels = eventLabels(); } catch (e) { return; } // keep the UK default in the markup
-  $$('[data-ev-date]').forEach(el => { el.textContent = labels.date; });
-  $$('[data-ev-time]').forEach(el => { el.textContent = labels.time; });
-  $$('[data-event-short]').forEach(el => { el.textContent = ` · ${labels.short}`; });
-  initCountdown(labels);
+  initCountdown();
 }
 
 /* ---------- Countdown ---------- */
 
-function initCountdown(labels) {
+function initCountdown() {
   const box = $('[data-countdown]');
   const sticky = $('[data-sticky-when]');
   const pad = n => String(n).padStart(2, '0');
@@ -79,7 +47,7 @@ function initCountdown(labels) {
     const s = Math.floor(ms / 1000);
     const v = { d: Math.floor(s / 86400), h: Math.floor(s / 3600) % 24, m: Math.floor(s / 60) % 60, s: s % 60 };
     for (const k in v) $(`[data-cd="${k}"]`, box).textContent = pad(v[k]);
-    sticky.replaceChildren(`${v.d}d ${pad(v.h)}h ${pad(v.m)}m ${pad(v.s)}s`, Object.assign(document.createElement('small'), { textContent: labels.short }));
+    sticky.replaceChildren(`${v.d}d ${pad(v.h)}h ${pad(v.m)}m ${pad(v.s)}s`, Object.assign(document.createElement('small'), { textContent: 'Sat, 5 Dec · 8pm UK' }));
     return true;
   };
   if (!tick()) return;
