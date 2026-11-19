@@ -54,6 +54,7 @@ button { font: inherit; }
 .pink { color: var(--pink); }
 .pink-dark { color: var(--pink-dark); }
 .center { display: flex; justify-content: center; }
+.nowrap { white-space: nowrap; }
 
 .eyebrow {
   display: flex;
@@ -200,12 +201,30 @@ button { font: inherit; }
   align-items: center;
   text-align: center;
 }
-.hero-eyebrow { justify-content: center; color: #2A2426; }
+/* Date line in the /job style: ● LABEL / 5 DEC / 8PM GMT */
+.live {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px clamp(8px,1.4vw,18px);
+  margin: 0 0 28px;
+  font-size: clamp(12px,1vw,13px);
+  font-weight: 500;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+  color: #2A2426;
+}
+.live-label { display: flex; align-items: center; gap: 8px; }
+.live-when { display: flex; align-items: center; gap: clamp(8px,1.4vw,18px); white-space: nowrap; }
+.live-sep { color: #B9B0B2; }
+.live-dark { color: var(--bg); }
+.live-dark .live-sep { color: #6E6467; }
 .hero-title {
   margin: 0;
   font-weight: 500;
-  max-width: 15ch;
-  font-size: clamp(44px,6.6vw,104px);
+  max-width: 18ch;
+  font-size: clamp(38px,5vw,76px);
   line-height: .94;
   letter-spacing: -.055em;
   text-wrap: balance;
@@ -214,7 +233,6 @@ button { font: inherit; }
   max-width: 640px;
   margin: clamp(24px,2.6vw,34px) 0 0;
   font-size: clamp(17px,1.45vw,21px);
-  font-style: italic;
   line-height: 1.45;
   letter-spacing: -.015em;
   text-wrap: pretty;
@@ -222,13 +240,6 @@ button { font: inherit; }
 }
 
 .when { margin: clamp(32px,3.4vw,44px) 0 clamp(28px,3vw,36px); display: flex; flex-direction: column; align-items: center; gap: 18px; }
-.when-line {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: -.01em;
-}
-.when-line small { font-weight: 400; color: var(--muted); }
 .countdown { display: flex; gap: 10px; }
 .countdown div {
   min-width: 82px;
@@ -375,12 +386,7 @@ button { font: inherit; }
   color: var(--muted-dark);
   text-wrap: pretty;
 }
-.final-when {
-  margin: clamp(28px,3vw,40px) 0 24px;
-  font-size: 15px;
-  font-weight: 600;
-}
-.final-when small { font-weight: 400; color: var(--muted-dark); }
+.final-when { margin: clamp(28px,3vw,40px) 0 24px; }
 
 .footer {
   margin-top: clamp(80px,10vw,140px);
@@ -524,8 +530,8 @@ button { font: inherit; }
   .nav { padding: 20px var(--gutter) 0; }
   .nav-cta { display: none; }
   .hero-body { padding-top: 56px; padding-bottom: 72px; }
-  .hero-eyebrow { font-size: 12px; }
-  .hero-title { font-size: clamp(36px,10.4vw,50px); }
+  .hero-title { font-size: clamp(32px,9vw,42px); }
+  .live-when .live-sep:first-child { display: none; } /* the date drops to its own line */
   .countdown { gap: 6px; width: 100%; }
   .countdown div { flex: 1; min-width: 0; border-radius: 14px; padding: 12px 4px 9px; }
   .countdown span { font-size: 28px; }
