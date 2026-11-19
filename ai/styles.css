@@ -234,7 +234,7 @@ button { font: inherit; }
 .hero-title {
   margin: 0;
   font-weight: 500;
-  font-size: clamp(46px,7.4vw,112px);
+  font-size: clamp(30px,calc(7.4vw - 16px),96px);
   line-height: .94;
   letter-spacing: -.055em;
   flex: 1 1 560px;
@@ -579,7 +579,7 @@ button { font: inherit; }
   .hero { min-height: 0; }
   .hero-body { padding-top: 56px; padding-bottom: 72px; }
   .hero-body .hero-live { flex: 1 1 100%; justify-content: flex-start; margin: 0; }
-  .hero-title { font-size: clamp(44px,12.5vw,60px); max-width: none; flex-basis: 100%; }
+  .hero-title { font-size: clamp(28px,calc(12.5vw - 16px),44px); max-width: none; flex-basis: 100%; }
   .hero-side { flex-basis: 100%; }
   .when { width: 100%; }
   .countdown { width: 100%; }
