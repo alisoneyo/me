@@ -4,7 +4,7 @@ const CONFIG = {
   // Workshop start, for the countdown. The date shown on the page (SAT, 5 DEC / 8PM UK) is in index.html.
   // Leave empty ('') to hide the date and the countdown.
   eventStart: '2026-12-05T20:00:00Z', // Sat 5 Dec, 8pm UK (GMT)
-  // Where the form sends { firstName, email, marketingOptIn, source } as JSON.
+  // Where the form sends { firstName, lastName, email, phone, marketingOptIn, source } as JSON.
   // Not connected yet: until it is, submitting shows an error instead of pretending to register.
   // Preview the states with ?preview=success or ?preview=error on the page URL.
   registerUrl: ''
@@ -95,16 +95,20 @@ function initRegistration() {
     if (show) { msg.id = msg.id || `err-${name}`; input.setAttribute('aria-describedby', msg.id); }
     else input.removeAttribute('aria-describedby');
   };
-  const validate = () => {
-    const nameOk = form.elements.firstName.value.trim().length > 0;
-    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(form.elements.email.value.trim());
-    fieldError('firstName', !nameOk);
-    fieldError('email', !emailOk);
-    if (!nameOk) form.elements.firstName.focus();
-    else if (!emailOk) form.elements.email.focus();
-    return nameOk && emailOk;
+  const FIELDS = ['firstName', 'lastName', 'email', 'phone'];
+  const checks = {
+    firstName: v => v.length > 0,
+    lastName: v => v.length > 0,
+    email: v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v),
+    phone: v => /^\+?[\d\s().-]{7,}$/.test(v) && v.replace(/\D/g, '').length >= 7
   };
-  ['firstName', 'email'].forEach(n => form.elements[n].addEventListener('input', () => {
+  const validate = () => {
+    const bad = FIELDS.filter(n => !checks[n](form.elements[n].value.trim()));
+    FIELDS.forEach(n => fieldError(n, bad.includes(n)));
+    if (bad.length) form.elements[bad[0]].focus();
+    return bad.length === 0;
+  };
+  FIELDS.forEach(n => form.elements[n].addEventListener('input', () => {
     if (form.elements[n].getAttribute('aria-invalid') === 'true') fieldError(n, false);
   }));
 
@@ -139,7 +143,9 @@ function initRegistration() {
     const firstName = typed.charAt(0).toUpperCase() + typed.slice(1);
     const payload = {
       firstName,
+      lastName: form.elements.lastName.value.trim().slice(0, 60),
       email: form.elements.email.value.trim().slice(0, 120),
+      phone: form.elements.phone.value.trim().slice(0, 25),
       marketingOptIn: form.elements.marketing.checked, // separate from the workshop emails
       source
     };

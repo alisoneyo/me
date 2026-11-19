@@ -73,14 +73,13 @@ fbq('track', 'PageView');
       <div class="when">
         <div class="countdown" data-countdown hidden>
           <div><span data-cd="d">00</span><small>Days</small></div>
-          <div><span data-cd="h">00</span><small>Hours</small></div>
-          <div><span data-cd="m">00</span><small>Minutes</small></div>
-          <div><span data-cd="s">00</span><small>Seconds</small></div>
+          <div><span data-cd="h">00</span><small>Hrs</small></div>
+          <div><span data-cd="m">00</span><small>Mins</small></div>
+          <div><span data-cd="s">00</span><small>Secs</small></div>
         </div>
       </div>
 
       <button type="button" class="btn-dark" data-register="hero">Save my free seat<span class="btn-dark-icon" aria-hidden="true"><span class="arrow-right">↓</span></span></button>
-      <p class="hero-note">Free · Live online · With Claude, Terminal and Obsidian</p>
       </div>
     </div>
   </section>
@@ -156,20 +155,31 @@ fbq('track', 'PageView');
     <button type="button" class="reg-close" data-close aria-label="Close">×</button>
 
     <div class="reg-form-view">
-      <p class="eyebrow"><span class="eyebrow-dot eyebrow-dot-green"></span>Free live workshop · Sat, 5 Dec</p>
       <h2 id="reg-title" class="reg-title">Save your free seat</h2>
       <p class="reg-sub">The AI Productivity Workshop with Alison Eyo.</p>
 
       <form class="reg-form" novalidate>
-        <label class="field">
-          <span>First name</span>
-          <input type="text" name="firstName" autocomplete="given-name" required maxlength="60">
-          <small class="field-error" data-error-for="firstName" hidden>Please enter your first name.</small>
-        </label>
+        <div class="field-row">
+          <label class="field">
+            <span>First name</span>
+            <input type="text" name="firstName" autocomplete="given-name" required maxlength="60">
+            <small class="field-error" data-error-for="firstName" hidden>Please enter your first name.</small>
+          </label>
+          <label class="field">
+            <span>Last name</span>
+            <input type="text" name="lastName" autocomplete="family-name" required maxlength="60">
+            <small class="field-error" data-error-for="lastName" hidden>Please enter your last name.</small>
+          </label>
+        </div>
         <label class="field">
           <span>Email address</span>
           <input type="email" name="email" autocomplete="email" inputmode="email" required maxlength="120">
           <small class="field-error" data-error-for="email" hidden>Please enter a valid email address.</small>
+        </label>
+        <label class="field">
+          <span>Phone number</span>
+          <input type="tel" name="phone" autocomplete="tel" inputmode="tel" required maxlength="25" placeholder="+44 7700 900123">
+          <small class="field-error" data-error-for="phone" hidden>Please enter your phone number, with your country code.</small>
         </label>
 
         <p class="consent-note">By registering, you agree to receive emails about this workshop, such as your joining link and reminders.</p>
