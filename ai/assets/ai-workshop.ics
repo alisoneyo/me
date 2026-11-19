@@ -9,8 +9,8 @@ DTSTAMP:20261119T120000Z
 DTSTART:20261205T200000Z
 DTEND:20261205T210000Z
 SUMMARY:How to Use AI to Work Smarter & Get More Done
-DESCRIPTION:Free live workshop with Alison Eyo\, streamed live on YouTube. The link will be emailed to you before we go live.\n\nhttps://www.thealisoneyo.com/ai/
-LOCATION:YouTube Live
+DESCRIPTION:Free live workshop with Alison Eyo\, streamed live on YouTube.\n\nWatch live: https://www.youtube.com/watch?v=MOGoOagNRlI\n\nWorkshop page: https://www.thealisoneyo.com/ai/
+LOCATION:https://www.youtube.com/watch?v=MOGoOagNRlI
 URL:https://www.thealisoneyo.com/ai/
 BEGIN:VALARM
 TRIGGER:-PT30M

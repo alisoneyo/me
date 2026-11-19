@@ -11,9 +11,10 @@ const THANKS = {
 
 (() => {
   const pageUrl = (document.querySelector('link[rel="canonical"]') || {}).href || (location.origin + location.pathname);
-  const details = `Free live workshop with Alison Eyo, streamed on YouTube. The link will be emailed to you before we go live.\n\nWorkshop page: ${pageUrl}`;
+  const LIVE_URL = 'https://www.youtube.com/watch?v=MOGoOagNRlI';
+  const details = `Free live workshop with Alison Eyo, streamed on YouTube.\n\nWatch live: ${LIVE_URL}\n\nWorkshop page: ${pageUrl}`;
   const googleUrl = 'https://calendar.google.com/calendar/render?' + new URLSearchParams({
-    action: 'TEMPLATE', text: THANKS.title, dates: `${THANKS.start}/${THANKS.end}`, details, location: 'YouTube Live'
+    action: 'TEMPLATE', text: THANKS.title, dates: `${THANKS.start}/${THANKS.end}`, details, location: LIVE_URL
   });
   const icsUrl = '/ai/assets/ai-workshop.ics';
 
@@ -68,11 +69,15 @@ const THANKS = {
       title.textContent = 'You’re in!';
     }
     const sub = ty.querySelector('.ty-sub');
-    sub.append('Your seat is saved. I’ll email the YouTube link to ');
+    sub.append('Your seat is saved. We go live on ');
+    const yt = document.createElement('a');
+    yt.href = LIVE_URL; yt.target = '_blank'; yt.rel = 'noopener'; yt.className = 'ty-email';
+    yt.textContent = 'YouTube';
+    sub.append(yt, '. Details are on their way to ');
     const strong = document.createElement('span');
     strong.className = 'ty-email';
     strong.textContent = mail || 'your inbox';
-    sub.append(strong, ' before we go live.');
+    sub.append(strong, '.');
 
     // The closing heading, copy, date and button make way for the card
     [...main.children].forEach(el => { el.hidden = true; });
