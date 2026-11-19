@@ -211,7 +211,7 @@ button { font: inherit; }
   justify-content: space-between;
   gap: clamp(20px,3.4vw,48px) 64px;
 }
-.hero-side { flex: 0 1 460px; padding-bottom: .6em; }
+.hero-side { flex: 0 1 500px; padding-bottom: .6em; }
 /* Date line in the /job style: ● LABEL / 5 DEC / 8PM GMT */
 .live {
   display: flex;
@@ -249,19 +249,23 @@ button { font: inherit; }
   color: #2A2426;
 }
 
-.when { margin: 24px 0 28px; }
-.countdown { display: flex; gap: 10px; }
+/* Button and countdown side by side */
+.hero-actions { display: flex; flex-wrap: wrap; align-items: stretch; gap: 12px 12px; margin-top: 28px; }
+.when, .when .countdown { display: flex; }
+.when { margin: 0; }
+.countdown div { justify-content: center; }
+.countdown { display: flex; gap: 6px; }
 .countdown div {
-  min-width: 82px;
-  padding: 14px 10px 10px;
+  min-width: 54px;
+  padding: 10px 6px 8px;
   box-sizing: border-box;
-  border-radius: 18px;
+  border-radius: 14px;
   background: var(--cd-bg,#fff);
   color: var(--cd-ink,var(--ink));
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
 }
 /* Liquid fill on hover: a slowly turning blob rises into the box */
 .countdown div { position: relative; overflow: hidden; isolation: isolate; cursor: default; transition: transform .4s var(--ease); }
@@ -294,14 +298,14 @@ button { font: inherit; }
 .countdown div:active span { color: #fff; }
 .countdown div:active small { color: rgba(255,255,255,.82); }
 .countdown span {
-  font-size: clamp(30px,3vw,40px);
+  font-size: 22px;
   font-weight: 500;
   line-height: 1;
   letter-spacing: -.04em;
   font-variant-numeric: tabular-nums;
 }
 .countdown small {
-  font-size: 11px;
+  font-size: 9px;
   font-weight: 500;
   letter-spacing: .06em;
   text-transform: uppercase;
@@ -577,10 +581,10 @@ button { font: inherit; }
   .hero-body .hero-live { flex: 1 1 100%; justify-content: flex-start; margin: 0; }
   .hero-title { font-size: clamp(44px,12.5vw,60px); max-width: none; flex-basis: 100%; }
   .hero-side { flex-basis: 100%; }
-  .countdown { gap: 6px; width: 100%; }
-  .countdown div { flex: 1; min-width: 0; border-radius: 14px; padding: 12px 4px 9px; }
-  .countdown span { font-size: 28px; }
-  .countdown small { font-size: 10px; letter-spacing: .04em; }
+  .when { width: 100%; }
+  .countdown { width: 100%; }
+  .countdown div { flex: 1; min-width: 0; }
+  .countdown small { letter-spacing: .04em; }
   .hero-side .btn-dark,
   .center .btn-dark,
   .host-copy .btn-dark,
