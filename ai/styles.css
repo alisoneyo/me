@@ -234,11 +234,11 @@ button { font: inherit; }
 .hero-title {
   margin: 0;
   font-weight: 500;
-  font-size: clamp(28px,calc(7.4vw - 20px),92px);
+  font-size: clamp(28px,calc(6.6vw - 16px),80px);
   line-height: .94;
   letter-spacing: -.055em;
   flex: 1 1 560px;
-  max-width: 13ch;
+  max-width: 14ch;
 }
 .hero-copy {
   margin: 0;
