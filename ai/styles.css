@@ -430,30 +430,31 @@ button { font: inherit; }
 .footer-legal { flex: 1 1 100%; margin: 8px 0 0; font-size: 12px; line-height: 1.5; color: #8C8285; max-width: 720px; }
 
 /* ---------- Registration modal ---------- */
+/* Only the Serlzo form shows: no panel around it */
 .reg {
-  width: min(calc(100% - 24px), 480px);
+  width: min(calc(100% - 24px), 460px);
   max-height: calc(100dvh - 24px);
   box-sizing: border-box;
-  padding: clamp(28px,4vw,40px);
+  padding: 0;
   border: 0;
-  border-radius: 28px;
-  background: var(--bg);
+  background: transparent;
   color: var(--ink);
   font-family: 'Geist', 'Geist Fallback', system-ui, sans-serif;
-  box-shadow: 0 40px 100px -30px rgba(20,16,18,.5);
+  overflow: visible;
 }
 .reg::backdrop { background: rgba(20,16,18,.55); backdrop-filter: blur(4px); }
 .reg[open] { animation: regIn .35s var(--ease); }
 @keyframes regIn { from { opacity: 0; transform: translateY(16px) scale(.98); } }
 .reg-close {
   position: absolute;
+  z-index: 1;
   top: 14px;
   right: 14px;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border: 0;
   border-radius: 50%;
-  background: #EFEBE4;
+  background: #F1EEEA;
   color: var(--ink);
   font-size: 22px;
   line-height: 1;
@@ -469,10 +470,8 @@ button { font: inherit; }
   letter-spacing: -.05em;
 }
 .reg-sub { margin: 10px 0 26px; font-size: 15px; line-height: 1.5; color: var(--muted); }
-.reg-embed { margin-top: 36px; min-height: 420px; }
-.reg-embed iframe { display: block; width: 100%; border: 0; border-radius: 16px; }
-.reg-fallback { margin: 14px 0 0; font-size: 13px; text-align: center; color: var(--muted); }
-.reg-fallback a { color: inherit; }
+.reg-embed { min-height: 420px; }
+.reg-embed iframe { display: block; width: 100%; border: 0; border-radius: 16px; box-shadow: 0 40px 100px -30px rgba(20,16,18,.5); }
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -581,3 +580,28 @@ button { font: inherit; }
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
+
+/* ---------- Thank-you page ---------- */
+.ty-hero { min-height: max(560px,78vh); }
+.ty-hero .hero-copy strong { font-weight: 600; color: var(--ink); }
+.ty-steps li > div { display: flex; flex-direction: column; gap: 16px; }
+@media (min-width: 900px) { .ty-steps { grid-template-columns: repeat(3,minmax(0,1fr)); } }
+.ty-steps li p { margin: 0; }
+.ty-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.ty-chip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  padding: 11px 18px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+.ty-chip:hover { background: var(--ink); color: var(--bg); }
+.ty-chip:focus-visible { outline: 3px solid var(--pink); outline-offset: 3px; }

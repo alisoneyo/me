@@ -87,17 +87,44 @@ function initRegistration() {
   // Click on the backdrop closes it
   dialog.addEventListener('click', e => { if (e.target === dialog) close(); });
 
-  // Back from Serlzo after signing up: confirm, count the lead once, and tidy the URL.
+  // Back from Serlzo after signing up: go to the thank-you page, greeted by first name.
+  // Only the first name travels; the thank-you page counts the lead once.
   const params = new URLSearchParams(location.search);
-  if (params.get('registered') === '1') {
-    show('done');
-    const details = { content_name: 'The AI Productivity Workshop', content_category: 'Workshop' };
-    pixel('Lead', details);
-    pixel('CompleteRegistration', { ...details, status: true });
-    params.delete('registered');
-    const qs = params.toString();
-    history.replaceState(null, '', location.pathname + (qs ? `?${qs}` : '') + location.hash);
+  const clean = v => (v && !/[{}<>]/.test(v) ? v.trim() : '');
+  const findParam = (preferred, pattern) => {
+    for (const k of preferred) if (clean(params.get(k))) return clean(params.get(k));
+    for (const [k, v] of params) if (pattern.test(k) && !/last|sur/i.test(k) && clean(v)) return clean(v);
+    return '';
+  };
+  const toThankYou = name => {
+    const first = String(name || '').trim().split(/\s+/)[0].slice(0, 40);
+    const url = '/ai/thank-you/?' + new URLSearchParams(first ? { registered: '1', name: first } : { registered: '1' });
+    // If Serlzo's redirect opened inside the form frame, move the whole page instead
+    try { (window.top !== window ? window.top : window).location.replace(url); } catch (e) { location.replace(url); }
+  };
+  const email = findParam(['email', 'field_email', 'email_address'], /e-?mail/i);
+  if (params.get('registered') === '1' || /@/.test(email)) {
+    toThankYou(findParam(['first_name', 'firstName', 'name', 'full_name', 'fullName', 'field_full_name'], /name/i));
+    return;
   }
+
+  // Serlzo's embed also posts a message when the form is submitted (as on /job)
+  const formId = $('.reg-embed', dialog)?.getAttribute('data-serlzo-form');
+  const pick = (obj, keys) => {
+    for (const src of [obj, obj.data, obj.fields, obj.values, obj.answers, obj.submission, obj.submission && obj.submission.answers]) {
+      if (!src || typeof src !== 'object') continue;
+      for (const k of keys) if (typeof src[k] === 'string' && src[k]) return src[k];
+    }
+    return '';
+  };
+  window.addEventListener('message', e => {
+    const data = e.data || {};
+    let host = '';
+    try { host = new URL(e.origin).hostname; } catch (err) { return; }
+    if (!/(^|\.)serlzo\.(com|site)$/.test(host) || data.type !== 'serlzo-form-submitted') return;
+    if (formId && data.publicId && data.publicId !== formId) return;
+    toThankYou(pick(data, ['first_name', 'firstName', 'name', 'full_name', 'fullName', 'field_full_name']));
+  });
 }
 
 /* ---------- Sticky CTA (mobile) ---------- */
