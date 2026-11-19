@@ -355,8 +355,7 @@ button { font: inherit; }
   color: var(--ink) !important;
   margin-bottom: 22px !important;
 }
-.host-copy .host-close { font-weight: 600; color: var(--ink); }
-.host-copy .btn-dark { margin-top: 20px; }
+.host-copy .host-close { font-weight: 600; color: var(--ink); margin-bottom: 0; }
 
 /* ---------- Final register panel (same as /job) ---------- */
 .final { padding: 0 clamp(12px,2vw,24px) clamp(12px,2vw,24px); }
@@ -558,7 +557,6 @@ button { font: inherit; }
   .countdown small { letter-spacing: .04em; }
   .hero-side .btn-dark,
   .center .btn-dark,
-  .host-copy .btn-dark,
   .final-main .btn-dark { width: 100%; justify-content: space-between; }
   .learn .h2 { max-width: none; text-align: left; }
   .outcomes { grid-template-columns: minmax(0,1fr); margin-top: 36px; }
